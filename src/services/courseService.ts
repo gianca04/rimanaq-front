@@ -1,13 +1,10 @@
 import { Course, Lesson, CoursesListResponse, CourseDetailResponse, LessonsListResponse, LessonDetailResponse, CourseWithLevels, Level, LessonContent } from '../types';
+import { authService } from './authService';
+import { API_CONFIG } from '../config/constants';
 
-const API_BASE_URL = 'http://localhost:8000/api';
-
-// Configuración básica para fetch
-const fetchConfig: RequestInit = {
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
+// Función para obtener headers con autenticación
+const getAuthHeaders = (): Record<string, string> => {
+  return authService.getAuthHeaders();
 };
 
 /**
@@ -20,7 +17,10 @@ export class CourseService {
    */
   static async getAllCourses(): Promise<Course[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/courses`, fetchConfig);
+      const response = await fetch(`${API_CONFIG.BASE_URL}/courses`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
       
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
@@ -46,7 +46,10 @@ export class CourseService {
    */
   static async getCourseById(id: number): Promise<Course> {
     try {
-      const response = await fetch(`${API_BASE_URL}/courses/${id}`, fetchConfig);
+      const response = await fetch(`${API_CONFIG.BASE_URL}/courses/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -74,7 +77,10 @@ export class CourseService {
    */
   static async getAllLessons(): Promise<Lesson[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/lessons`, fetchConfig);
+      const response = await fetch(`${API_CONFIG.BASE_URL}/lessons`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
       
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
@@ -100,7 +106,10 @@ export class CourseService {
    */
   static async getLessonsByCourse(courseId: number): Promise<Lesson[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/courses/${courseId}/lessons`, fetchConfig);
+      const response = await fetch(`${API_CONFIG.BASE_URL}/courses/${courseId}/lessons`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -129,7 +138,10 @@ export class CourseService {
    */
   static async getLessonById(id: number): Promise<Lesson> {
     try {
-      const response = await fetch(`${API_BASE_URL}/lessons/${id}`, fetchConfig);
+      const response = await fetch(`${API_CONFIG.BASE_URL}/lessons/${id}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -157,9 +169,9 @@ export class CourseService {
    */
   static async checkApiHealth(): Promise<boolean> {
     try {
-      const response = await fetch(`${API_BASE_URL}/courses`, {
-        ...fetchConfig,
+      const response = await fetch(`${API_CONFIG.BASE_URL}/courses`, {
         method: 'HEAD', // Solo verificar headers, no necesitamos el contenido
+        headers: getAuthHeaders(),
       });
       
       return response.ok;

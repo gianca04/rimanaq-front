@@ -1,18 +1,17 @@
 import { LoginRequest, RegisterRequest, AuthResponse, User } from '../types';
-
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+import { API_CONFIG, STORAGE_KEYS, MESSAGES } from '../config/constants';
 
 class AuthService {
-  // Clave para guardar el token en localStorage
-  private readonly TOKEN_KEY = 'auth_token';
-  private readonly USER_KEY = 'auth_user';
+  // Claves para localStorage desde constantes
+  private readonly TOKEN_KEY = STORAGE_KEYS.AUTH_TOKEN;
+  private readonly USER_KEY = STORAGE_KEYS.AUTH_USER;
 
   /**
    * Hace login del usuario y guarda el token
    */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,12 +22,29 @@ class AuthService {
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
+      if (response.ok) {
+        // Normalizar respuesta para consistencia
+        const authResponse: AuthResponse = {
+          success: true,
+          data: {
+            user: data.data?.user || data.user,
+            token: data.data?.token || data.token,
+          },
+          message: data.message || 'Login exitoso',
+        };
+
         // Guardar token y usuario en localStorage
-        this.setToken(data.data.token);
-        this.setUser(data.data.user);
-        return data;
+        this.setToken(authResponse.data.token);
+        this.setUser(authResponse.data.user);
+        return authResponse;
       } else {
+        // Manejo de errores de validación
+        if (data.errors) {
+          const errorMessages = Object.values(data.errors)
+            .flat()
+            .join('. ');
+          throw new Error(errorMessages);
+        }
         throw new Error(data.message || 'Error al iniciar sesión');
       }
     } catch (error) {
@@ -42,7 +58,7 @@ class AuthService {
    */
   async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/register`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,12 +69,30 @@ class AuthService {
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
+      if (response.ok) {
+        // Laravel devuelve directamente user y token, no dentro de data.data
+        const authResponse: AuthResponse = {
+          success: true,
+          data: {
+            user: data.user,
+            token: data.token,
+          },
+          message: data.message || 'Registro exitoso',
+        };
+
         // Guardar token y usuario en localStorage
-        this.setToken(data.data.token);
-        this.setUser(data.data.user);
-        return data;
+        this.setToken(data.token);
+        this.setUser(data.user);
+        return authResponse;
       } else {
+        // Manejo de errores de validación
+        if (data.errors) {
+          // Extraer el primer error de cada campo
+          const errorMessages = Object.values(data.errors)
+            .flat()
+            .join('. ');
+          throw new Error(errorMessages);
+        }
         throw new Error(data.message || 'Error al registrarse');
       }
     } catch (error) {
@@ -74,7 +108,7 @@ class AuthService {
     try {
       const token = this.getToken();
       if (token) {
-        await fetch(`${API_BASE_URL}/logout`, {
+        await fetch(`${API_CONFIG.BASE_URL}/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

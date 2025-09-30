@@ -3,10 +3,14 @@ import CourseSelection from './components/CourseSelection';
 import LevelMap from './components/LevelMap';
 import LessonModal from './components/LessonModal';
 import Header from './components/Header';
+import AuthScreen from './components/AuthScreen';
 import { CourseWithLevels, Level, UserProgress } from './types';
 import { getUIFormattedCourses } from './services/courseService';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { authService } from './services/authService';
 
-function App() {
+// Componente principal de la aplicación autenticada
+function AuthenticatedApp() {
   const [selectedCourse, setSelectedCourse] = useState<CourseWithLevels | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
   const [viewMode, setViewMode] = useState<'courses' | 'levels' | 'lesson'>('courses');
@@ -149,6 +153,42 @@ function App() {
         />
       )}
     </div>
+  );
+}
+
+// Componente que maneja la autenticación
+function AppWithAuth() {
+  const { isAuthenticated, loading, login } = useAuth();
+
+  const handleLoginSuccess = () => {
+    // Obtener el usuario guardado después del login exitoso
+    const user = authService.getUser();
+    if (user) {
+      login(user); // Actualizar el contexto con el usuario
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
+        <div className="text-white text-2xl">🤟 Verificando autenticación...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <AuthScreen onAuthSuccess={handleLoginSuccess} />;
+  }
+
+  return <AuthenticatedApp />;
+}
+
+// Componente principal que envuelve todo con el AuthProvider
+function App() {
+  return (
+    <AuthProvider>
+      <AppWithAuth />
+    </AuthProvider>
   );
 }
 
