@@ -159,3 +159,28 @@ export interface AuthResponse {
   };
   message: string;
 }
+
+// Tipos para perfil de usuario
+export interface UserProfile {
+  name: string;
+  email: string;
+  current_password?: string;
+  new_password?: string;
+  new_password_confirmation?: string;
+}
+
+export interface UpdateProfileRequest {
+  name: string;
+  email: string;
+  current_password?: string;
+  new_password?: string;
+  new_password_confirmation?: string;
+}
+
+export interface UpdateProfileResponse {
+  success: boolean;
+  data: {
+    user: User;
+  };
+  message: string;
+}

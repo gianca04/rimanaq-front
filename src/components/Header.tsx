@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 interface HeaderProps {
   selectedCourse: CourseWithLevels | null;
   onBackToCourses: () => void;
+  onGoToProfile: () => void;
   totalStars: number;
   completedLevels: number;
   totalLevels: number;
@@ -14,6 +15,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
   selectedCourse,
   onBackToCourses,
+  onGoToProfile,
   totalStars,
   completedLevels,
   totalLevels
@@ -25,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="bg-white/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+    <header className="bg-black/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -39,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({
               </button>
             )}
             <h1 className="text-2xl font-bold text-white">
-              {selectedCourse ? selectedCourse.title : 'LSP Learning'}
+              {selectedCourse ? selectedCourse.title : 'Rimanaq'}
             </h1>
           </div>
 
@@ -63,12 +65,16 @@ const Header: React.FC<HeaderProps> = ({
               </>
             )}
             
-            {/* User info and logout */}
+            {/* User info, profile and logout */}
             <div className="flex items-center space-x-4 border-l border-white/20 pl-6">
-              <div className="flex items-center space-x-2 text-white">
+              <button
+                onClick={onGoToProfile}
+                className="flex items-center space-x-2 text-white hover:text-blue-300 transition-colors duration-200"
+                title="Ver perfil"
+              >
                 <User className="w-4 h-4" />
                 <span className="text-sm">{user?.name || user?.email}</span>
-              </div>
+              </button>
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-1 text-white hover:text-red-300 transition-colors duration-200"

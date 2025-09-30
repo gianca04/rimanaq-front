@@ -1,4 +1,4 @@
-import { LoginRequest, RegisterRequest, AuthResponse, User } from '../types';
+import { LoginRequest, RegisterRequest, AuthResponse, User, UpdateProfileRequest, UpdateProfileResponse } from '../types';
 import { API_CONFIG, STORAGE_KEYS, MESSAGES } from '../config/constants';
 
 class AuthService {
@@ -169,6 +169,46 @@ class AuthService {
   clearAuth(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
+  }
+
+  /**
+   * Actualiza el perfil del usuario
+   */
+  async updateProfile(profileData: UpdateProfileRequest): Promise<UpdateProfileResponse> {
+    try {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/profile`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Actualizar el usuario guardado en localStorage
+        this.setUser(data.user || data.data?.user);
+        
+        return {
+          success: true,
+          data: {
+            user: data.user || data.data?.user,
+          },
+          message: data.message || 'Perfil actualizado correctamente',
+        };
+      } else {
+        // Manejo de errores de validación
+        if (data.errors) {
+          const errorMessages = Object.values(data.errors)
+            .flat()
+            .join('. ');
+          throw new Error(errorMessages);
+        }
+        throw new Error(data.message || 'Error al actualizar el perfil');
+      }
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error);
+      throw error;
+    }
   }
 
   /**

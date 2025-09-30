@@ -73,7 +73,7 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
           ¡Aprende Lengua de Señas Peruana!
         </h2>
         <p className="text-xl text-white/80">
-          Descubre el mundo de la comunicación visual y conecta con la comunidad sorda
+          Descubre el mundo de la comunicación visual
         </p>
       </div>
 

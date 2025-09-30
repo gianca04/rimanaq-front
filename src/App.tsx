@@ -4,6 +4,7 @@ import LevelMap from './components/LevelMap';
 import LessonModal from './components/LessonModal';
 import Header from './components/Header';
 import AuthScreen from './components/AuthScreen';
+import Profile from './components/Profile';
 import { CourseWithLevels, Level, UserProgress } from './types';
 import { getUIFormattedCourses } from './services/courseService';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -13,7 +14,7 @@ import { authService } from './services/authService';
 function AuthenticatedApp() {
   const [selectedCourse, setSelectedCourse] = useState<CourseWithLevels | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
-  const [viewMode, setViewMode] = useState<'courses' | 'levels' | 'lesson'>('courses');
+  const [viewMode, setViewMode] = useState<'courses' | 'levels' | 'lesson' | 'profile'>('courses');
   const [userProgress, setUserProgress] = useState<UserProgress>({});
   const [courses, setCourses] = useState<CourseWithLevels[]>([]);
   const [loading, setLoading] = useState(true);
@@ -95,6 +96,14 @@ function AuthenticatedApp() {
     setViewMode('levels');
   };
 
+  const handleGoToProfile = () => {
+    setViewMode('profile');
+  };
+
+  const handleBackFromProfile = () => {
+    setViewMode('courses');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-500 via-teal-400 to-green-400 flex items-center justify-center">
@@ -116,28 +125,34 @@ function AuthenticatedApp() {
       <Header 
         selectedCourse={selectedCourse}
         onBackToCourses={handleBackToCourses}
+        onGoToProfile={handleGoToProfile}
         totalStars={selectedCourse ? getTotalStars(selectedCourse.id) : 0}
         completedLevels={selectedCourse ? getCompletedLevels(selectedCourse.id) : 0}
         totalLevels={selectedCourse?.levels?.length || 0}
       />
       
-      <main className="container mx-auto px-4 py-6">
-        {viewMode === 'courses' && (
-          <CourseSelection 
-            courses={courses}
-            onSelectCourse={handleSelectCourse}
-            userProgress={userProgress}
-          />
-        )}
+      {/* Contenido principal */}
+      {viewMode === 'profile' ? (
+        <Profile onBack={handleBackFromProfile} />
+      ) : (
+        <main className="container mx-auto px-4 py-6">
+          {viewMode === 'courses' && (
+            <CourseSelection 
+              courses={courses}
+              onSelectCourse={handleSelectCourse}
+              userProgress={userProgress}
+            />
+          )}
 
-        {viewMode === 'levels' && selectedCourse && (
-          <LevelMap
-            course={selectedCourse}
-            userProgress={userProgress}
-            onSelectLevel={handleSelectLevel}
-          />
-        )}
-      </main>
+          {viewMode === 'levels' && selectedCourse && (
+            <LevelMap
+              course={selectedCourse}
+              userProgress={userProgress}
+              onSelectLevel={handleSelectLevel}
+            />
+          )}
+        </main>
+      )}
 
       {/* Modal de lección */}
       {viewMode === 'lesson' && selectedLevel && selectedCourse && (
