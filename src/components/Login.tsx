@@ -44,14 +44,17 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
     <div className={`min-h-screen flex items-center justify-center ${UI_CONFIG.GRADIENTS.AUTH}`}>
       <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          🤟 Login LSP
+          🤟 Rimanq
         </h1>
+        <h3 className="text-lg text-center mb-6 text-gray-600">
+          ¡Bienvenido de nuevo! Por favor, inicia sesión para continuar.
+        </h3>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              📧 Email
+              Correo electrónico
             </label>
             <input
               type="email"
@@ -68,7 +71,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
           {/* Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              🔒 Contraseña
+              Contraseña
             </label>
             <input
               type="password"
@@ -95,7 +98,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
             disabled={loading}
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
-            {loading ? '⏳ Iniciando sesión...' : '✨ Iniciar Sesión'}
+            {loading ? '⏳ Iniciando sesión...' : '✨ Empezar a aprender'}
           </button>
         </form>
 
@@ -109,17 +112,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
             >
               Crear cuenta →
             </button>
-          </p>
-        </div>
-
-        {/* Info de prueba */}
-        <div className="mt-6 p-4 bg-gray-100 rounded-md">
-          <h3 className="font-semibold text-gray-700 mb-2">🧪 Para probar:</h3>
-          <p className="text-sm text-gray-600">
-            Usa cualquier email y contraseña válidos de tu API Laravel.
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            El token se guarda automáticamente en localStorage.
           </p>
         </div>
       </div>

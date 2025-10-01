@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Star, Trophy, LogOut, User } from 'lucide-react';
+import { ArrowLeft, Star, Trophy, LogOut, User, Camera } from 'lucide-react';
 import { CourseWithLevels } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,6 +7,7 @@ interface HeaderProps {
   selectedCourse: CourseWithLevels | null;
   onBackToCourses: () => void;
   onGoToProfile: () => void;
+  onGoToTracking: () => void;
   totalStars: number;
   completedLevels: number;
   totalLevels: number;
@@ -16,6 +17,7 @@ const Header: React.FC<HeaderProps> = ({
   selectedCourse,
   onBackToCourses,
   onGoToProfile,
+  onGoToTracking,
   totalStars,
   completedLevels,
   totalLevels
@@ -65,8 +67,16 @@ const Header: React.FC<HeaderProps> = ({
               </>
             )}
             
-            {/* User info, profile and logout */}
+            {/* Tracking, User info, profile and logout */}
             <div className="flex items-center space-x-4 border-l border-white/20 pl-6">
+              <button
+                onClick={onGoToTracking}
+                className="flex items-center space-x-1 text-white hover:text-purple-300 transition-colors duration-200"
+                title="Probar tracking"
+              >
+                <Camera className="w-4 h-4" />
+                <span className="text-sm">Tracking</span>
+              </button>
               <button
                 onClick={onGoToProfile}
                 className="flex items-center space-x-2 text-white hover:text-blue-300 transition-colors duration-200"
