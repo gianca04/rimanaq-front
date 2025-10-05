@@ -1,32 +1,23 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ArrowLeft, Camera, Download, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Camera, Download, AlertCircle, Activity } from 'lucide-react';
+import { mediaPipeService, type MediaPipeResults } from '../services/MediaPipeService';
 
 interface TrackingTestProps {
   onBack: () => void;
 }
 
-// Tipos para MediaPipe
-interface TrackingResults {
-  timestamp: number;
-  poseLandmarks: any[] | null;
-  leftHandLandmarks: any[] | null;
-  rightHandLandmarks: any[] | null;
-  faceLandmarks: any[] | null;
-}
-
 const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const holisticRef = useRef<any>(null);
-  const cameraRef = useRef<any>(null);
   
-  const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isTracking, setIsTracking] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastResults, setLastResults] = useState<TrackingResults | null>(null);
+  const [lastResults, setLastResults] = useState<MediaPipeResults | null>(null);
+  const [serviceStatus, setServiceStatus] = useState(mediaPipeService.getStatus());
 
   // Función para exportar los datos de tracking
-  const exportTrackingData = (results: TrackingResults) => {
+  const exportTrackingData = (results: MediaPipeResults) => {
     const data = {
       timestamp: Date.now(),
       poseLandmarks: results.poseLandmarks || [],
@@ -47,138 +38,99 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
     URL.revokeObjectURL(url);
   };
 
-  // Función que maneja los resultados de MediaPipe
-  const onResults = (results: any) => {
-    if (!canvasRef.current) return;
-
-    const canvasCtx = canvasRef.current.getContext('2d');
-    if (!canvasCtx) return;
-
-    // Ocultar loading al recibir primer resultado
-    if (isLoading) {
-      setIsLoading(false);
-    }
-
-    // Limpiar canvas
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-    // Dibujar video de fondo
-    canvasCtx.drawImage(results.image, 0, 0, canvasRef.current.width, canvasRef.current.height);
-
-    // Dibujar landmarks usando MediaPipe drawing utils
-    if (window.drawConnectors && window.drawLandmarks) {
-      // Pose (cuerpo) - Azul
-      if (results.poseLandmarks) {
-        window.drawConnectors(canvasCtx, results.poseLandmarks, window.Holistic.POSE_CONNECTIONS, 
-          { color: '#1E90FF', lineWidth: 4 });
-        window.drawLandmarks(canvasCtx, results.poseLandmarks, 
-          { color: '#1E90FF', lineWidth: 2, radius: 2 });
-      }
-
-      // Cara - Cián
-      if (results.faceLandmarks) {
-        window.drawConnectors(canvasCtx, results.faceLandmarks, window.Holistic.FACEMESH_TESSELATION,
-          { color: '#00FFFF', lineWidth: 1 });
-        window.drawLandmarks(canvasCtx, results.faceLandmarks, 
-          { color: '#00FFFF', lineWidth: 1, radius: 1 });
-      }
-
-      // Manos - Azul para ambas
-      if (results.leftHandLandmarks) {
-        window.drawConnectors(canvasCtx, results.leftHandLandmarks, window.Holistic.HAND_CONNECTIONS,
-          { color: '#1E90FF', lineWidth: 2 });
-        window.drawLandmarks(canvasCtx, results.leftHandLandmarks, 
-          { color: '#1E90FF', lineWidth: 2, radius: 2 });
-      }
-
-      if (results.rightHandLandmarks) {
-        window.drawConnectors(canvasCtx, results.rightHandLandmarks, window.Holistic.HAND_CONNECTIONS,
-          { color: '#1E90FF', lineWidth: 2 });
-        window.drawLandmarks(canvasCtx, results.rightHandLandmarks, 
-          { color: '#1E90FF', lineWidth: 2, radius: 2 });
-      }
-    }
-
-    canvasCtx.restore();
-
-    // Guardar últimos resultados para exportar
-    setLastResults({
-      timestamp: Date.now(),
-      poseLandmarks: results.poseLandmarks || null,
-      leftHandLandmarks: results.leftHandLandmarks || null,
-      rightHandLandmarks: results.rightHandLandmarks || null,
-      faceLandmarks: results.faceLandmarks || null,
-    });
+  // Callback para manejar resultados del tracking
+  const handleResults = (results: MediaPipeResults) => {
+    setLastResults(results);
+    
+    if (!canvasRef.current || !videoRef.current) return;
+    
+    // Usar el método de dibujo del servicio singleton
+    mediaPipeService.drawResults(canvasRef.current, results, videoRef.current);
   };
 
-  // Inicializar MediaPipe cuando el componente se monta
+
+
+  // Inicializar tracking con servicio singleton
+  const startTracking = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      if (!videoRef.current || !canvasRef.current) {
+        throw new Error('Referencias de video o canvas no disponibles');
+      }
+
+      console.log('🚀 Iniciando tracking con MediaPipeService...');
+
+      // Inicializar servicio singleton (solo la primera vez)
+      const initialized = await mediaPipeService.initialize();
+      if (!initialized) {
+        throw new Error('No se pudo inicializar MediaPipe');
+      }
+
+      // Configurar callback de resultados
+      mediaPipeService.setOnResultsCallback(handleResults);
+
+      // Iniciar cámara
+      await mediaPipeService.startCamera(videoRef.current);
+
+      setIsTracking(true);
+      setServiceStatus(mediaPipeService.getStatus());
+      
+      console.log('✅ Tracking iniciado correctamente con servicio singleton');
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setError(`Error al iniciar tracking: ${errorMessage}`);
+      console.error('❌ Error al iniciar tracking:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Detener tracking
+  const stopTracking = () => {
+    console.log('🛑 Deteniendo tracking...');
+    
+    // Detener cámara (pero mantener instancia WASM para reutilización)
+    mediaPipeService.stopCamera();
+    
+    // Limpiar callback
+    mediaPipeService.setOnResultsCallback(null);
+    
+    // Limpiar canvas
+    if (canvasRef.current) {
+      const canvasCtx = canvasRef.current.getContext('2d');
+      if (canvasCtx) {
+        canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
+    
+    setIsTracking(false);
+    setError(null);
+    setServiceStatus(mediaPipeService.getStatus());
+    
+    console.log('✅ Tracking detenido - Instancia WASM conservada');
+  };
+
+  // Actualizar estado del servicio periódicamente
   useEffect(() => {
-    const initMediaPipe = async () => {
-      try {
-        // Verificar si MediaPipe está disponible
-        if (!window.Holistic) {
-          throw new Error('MediaPipe no está cargado. Asegúrate de que los scripts estén incluidos.');
-        }
+    const interval = setInterval(() => {
+      setServiceStatus(mediaPipeService.getStatus());
+    }, 1000);
 
-        console.log('🚀 Inicializando MediaPipe Holistic...');
-        
-        // Crear instancia de Holistic
-        const holistic = new window.Holistic({
-          locateFile: (file: string) => 
-            `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/${file}`
-        });
-
-        // Configurar opciones
-        holistic.setOptions({
-          modelComplexity: 1,
-          smoothLandmarks: true,
-          enableSegmentation: false,
-          smoothSegmentation: false,
-          refineFaceLandmarks: true,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5
-        });
-
-        holistic.onResults(onResults);
-        holisticRef.current = holistic;
-
-        // Inicializar cámara
-        if (videoRef.current && window.Camera) {
-          const camera = new window.Camera(videoRef.current, {
-            onFrame: async () => {
-              if (videoRef.current && holisticRef.current) {
-                await holisticRef.current.send({ image: videoRef.current });
-              }
-            },
-            width: 640,
-            height: 480
-          });
-
-          await camera.start();
-          cameraRef.current = camera;
-          setIsInitialized(true);
-          console.log('✅ MediaPipe iniciado correctamente');
-        }
-      } catch (err) {
-        console.error('❌ Error al inicializar MediaPipe:', err);
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-        setIsLoading(false);
-      }
-    };
-
-    initMediaPipe();
-
-    // Cleanup al desmontar
-    return () => {
-      if (cameraRef.current && cameraRef.current.stop) {
-        cameraRef.current.stop();
-      }
-      if (holisticRef.current && holisticRef.current.close) {
-        holisticRef.current.close();
-      }
-    };
+    return () => clearInterval(interval);
   }, []);
+
+  // Cleanup al desmontar componente - NO destruir servicio singleton
+  useEffect(() => {
+    return () => {
+      if (isTracking) {
+        mediaPipeService.stopCamera();
+        mediaPipeService.setOnResultsCallback(null);
+      }
+    };
+  }, [isTracking]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700">
@@ -198,10 +150,29 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
               📹 Prueba de Tracking LSP
             </h1>
             <div className="flex space-x-2">
+              {!isTracking ? (
+                <button
+                  onClick={startTracking}
+                  disabled={isLoading}
+                  className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors duration-200"
+                >
+                  <Activity className="w-4 h-4" />
+                  <span>{isLoading ? 'Iniciando...' : 'Iniciar'}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={stopTracking}
+                  className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span>Detener</span>
+                </button>
+              )}
+              
               {lastResults && (
                 <button
                   onClick={() => exportTrackingData(lastResults)}
-                  className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+                  className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
                 >
                   <Download className="w-4 h-4" />
                   <span>Exportar</span>
@@ -236,7 +207,7 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
               )}
 
               {/* Video y Canvas */}
-              {!isLoading && !error && (
+              {!error && (
                 <div className="space-y-6">
                   <div className="relative bg-black rounded-lg overflow-hidden">
                     <video
@@ -257,41 +228,75 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
                       <div className="flex items-center space-x-2">
                         <Camera className="w-4 h-4" />
                         <span className="text-sm">
-                          {isInitialized ? '🟢 Tracking activo' : '🔴 Inicializando...'}
+                          {isTracking ? '🟢 Tracking activo' : (isLoading ? '� Inicializando...' : '🔴 Detenido')}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Información */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-800 mb-2">
-                      📊 Información del Tracking
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <span className="text-gray-600">Pose:</span>
-                        <span className="ml-2 font-mono">
-                          {lastResults?.poseLandmarks ? '✅' : '❌'}
-                        </span>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-gray-800 mb-2">
+                        📊 Información del Tracking
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600">Pose:</span>
+                          <span className="ml-2 font-mono">
+                            {lastResults?.poseLandmarks ? '✅' : '❌'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Cara:</span>
+                          <span className="ml-2 font-mono">
+                            {lastResults?.faceLandmarks ? '✅' : '❌'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Mano Izq:</span>
+                          <span className="ml-2 font-mono">
+                            {lastResults?.leftHandLandmarks ? '✅' : '❌'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Mano Der:</span>
+                          <span className="ml-2 font-mono">
+                            {lastResults?.rightHandLandmarks ? '✅' : '❌'}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-gray-600">Cara:</span>
-                        <span className="ml-2 font-mono">
-                          {lastResults?.faceLandmarks ? '✅' : '❌'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Mano Izq:</span>
-                        <span className="ml-2 font-mono">
-                          {lastResults?.leftHandLandmarks ? '✅' : '❌'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Mano Der:</span>
-                        <span className="ml-2 font-mono">
-                          {lastResults?.rightHandLandmarks ? '✅' : '❌'}
-                        </span>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-semibold text-gray-800 mb-2">
+                        🔧 Estado del Servicio Singleton
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600">WASM:</span>
+                          <span className="ml-2 font-mono">
+                            {serviceStatus.isInitialized ? '✅ Listo' : '❌ No init'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Cámara:</span>
+                          <span className="ml-2 font-mono">
+                            {serviceStatus.isCameraActive ? '✅ Activa' : '❌ Detenida'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Callback:</span>
+                          <span className="ml-2 font-mono">
+                            {serviceStatus.hasCallback ? '✅ Set' : '❌ None'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Estado:</span>
+                          <span className="ml-2 font-mono">
+                            {serviceStatus.isInitializing ? '⏳ Init...' : '✅ Ready'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -299,10 +304,12 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
                   {/* Instrucciones */}
                   <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
                     <h3 className="font-semibold text-blue-800 mb-2">
-                      💡 Instrucciones
+                      💡 Instrucciones (Servicio Singleton)
                     </h3>
                     <ul className="text-sm text-blue-700 space-y-1">
+                      <li>• Haz clic en "Iniciar" para activar el tracking (WASM se inicializa una sola vez)</li>
                       <li>• Permite el acceso a la cámara cuando te lo solicite</li>
+                      <li>• El servicio singleton mantiene la instancia WASM entre sesiones</li>
                       <li>• Colócate frente a la cámara con buena iluminación</li>
                       <li>• Realiza gestos de lengua de señas para probar el tracking</li>
                       <li>• Haz clic en "Exportar" para descargar los datos de tracking</li>

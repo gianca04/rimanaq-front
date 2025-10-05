@@ -3,20 +3,27 @@
  * Evita re-inicializaciones y problemas de reactividad de React
  */
 
+import type { 
+  Landmark,
+  HolisticInterface,
+  CameraInterface,
+  HolisticResults
+} from '../types/mediapipe';
+
 interface MediaPipeResults {
   timestamp: number;
-  poseLandmarks: any[] | null;
-  leftHandLandmarks: any[] | null;
-  rightHandLandmarks: any[] | null;
-  faceLandmarks: any[] | null;
+  poseLandmarks: Landmark[] | null;
+  leftHandLandmarks: Landmark[] | null;
+  rightHandLandmarks: Landmark[] | null;
+  faceLandmarks: Landmark[] | null;
 }
 
 type OnResultsCallback = (results: MediaPipeResults) => void;
 
 class MediaPipeService {
   private static instance: MediaPipeService | null = null;
-  private holistic: any = null;
-  private camera: any = null;
+  private holistic: HolisticInterface | null = null;
+  private camera: CameraInterface | null = null;
   private isInitialized: boolean = false;
   private isInitializing: boolean = false;
   private onResultsCallback: OnResultsCallback | null = null;
@@ -43,7 +50,7 @@ class MediaPipeService {
    * Verifica si MediaPipe está disponible en el window global
    */
   private checkMediaPipeAvailability(): boolean {
-    return !!(window as any).Holistic && !!(window as any).Camera && !!(window as any).drawConnectors;
+    return !!window.Holistic && !!window.Camera && !!window.drawConnectors;
   }
 
   /**
@@ -71,7 +78,7 @@ class MediaPipeService {
       }
 
       // Crear instancia Holistic SOLO UNA VEZ
-      this.holistic = new (window as any).Holistic({
+      this.holistic = new window.Holistic({
         locateFile: (file: string) => 
           `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/${file}`
       });
@@ -88,7 +95,7 @@ class MediaPipeService {
       });
 
       // Configurar callback interno
-      this.holistic.onResults((results: any) => {
+      this.holistic.onResults((results: HolisticResults) => {
         const formattedResults: MediaPipeResults = {
           timestamp: Date.now(),
           poseLandmarks: results.poseLandmarks || null,
@@ -132,7 +139,7 @@ class MediaPipeService {
       console.log('🎥 MediaPipeService: Iniciando cámara...');
       this.videoElement = videoElement;
 
-      this.camera = new (window as any).Camera(videoElement, {
+      this.camera = new window.Camera(videoElement, {
         onFrame: async () => {
           if (this.holistic && this.videoElement) {
             await this.holistic.send({ image: this.videoElement });
@@ -190,9 +197,9 @@ class MediaPipeService {
     // Dibujar video de fondo
     canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 
-    const drawConnectors = (window as any).drawConnectors;
-    const drawLandmarks = (window as any).drawLandmarks;
-    const Holistic = (window as any).Holistic;
+    const drawConnectors = window.drawConnectors;
+    const drawLandmarks = window.drawLandmarks;
+    const Holistic = window.Holistic;
 
     if (drawConnectors && drawLandmarks && Holistic) {
       // Pose (cuerpo) - Azul
