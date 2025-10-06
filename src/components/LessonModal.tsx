@@ -54,6 +54,10 @@ const LessonModal: React.FC<LessonModalProps> = ({
     onComplete(course.id, level.id, finalScore);
   };
 
+  const handleReviewLesson = () => {
+    setIsCompleted(false);
+  };
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'fácil':
@@ -171,6 +175,12 @@ const LessonModal: React.FC<LessonModalProps> = ({
               </div>
 
               <div className="flex justify-center space-x-4">
+                <button
+                  onClick={handleReviewLesson}
+                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                >
+                  Revisar lección
+                </button>
                 <button
                   onClick={onClose}
                   className="px-8 py-3 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors"
