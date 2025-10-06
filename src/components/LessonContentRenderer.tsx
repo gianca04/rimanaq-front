@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { LessonContentStep, Gesture } from '../types';
+import GesturePractice from './GestureRecognition/GesturePractice';
 
 interface LessonContentRendererProps {
   content: LessonContentStep[] | null;
@@ -94,63 +95,20 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
       {/* Contenido principal */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden min-h-[500px]">
         {showPractice ? (
-          // Sección de práctica con gestures
-          <div className="p-8">
-            <div className="text-center mb-8">
-              <div className="text-6xl mb-6">🎯</div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                ¡Práctica!
-              </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Ahora es momento de practicar los gestos aprendidos en esta lección.
-              </p>
-            </div>
-
-            {/* Mostrar gestures si existen */}
-            {gestures && gestures.length > 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-4">🤟</div>
-                <p className="text-gray-600 mb-4">
-                  Gestos disponibles para práctica: {gestures.length}
-                </p>
-                <div className="bg-blue-50 p-6 rounded-xl mb-6">
-                  <h3 className="font-semibold text-blue-800 mb-2">Lista de Gestos:</h3>
-                  <ul className="space-y-2">
-                    {gestures.map((gesture, index) => (
-                      <li key={gesture.id} className="text-blue-600">
-                        {index + 1}. {gesture.gesture_data?.name || `Gesto ${gesture.id}`}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <button
-                  onClick={handleCompletePractice}
-                  className="px-8 py-3 bg-green-500 text-white rounded-xl font-medium hover:bg-green-600 transition-colors"
-                >
-                  Completar Práctica
-                </button>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-4">🤷‍♂️</div>
-                <p className="text-gray-600 mb-8">
-                  No hay gestos específicos para practicar en esta lección.
-                </p>
-                <button
-                  onClick={handleCompletePractice}
-                  className="px-8 py-3 bg-green-500 text-white rounded-xl font-medium hover:bg-green-600 transition-colors"
-                >
-                  Continuar
-                </button>
-              </div>
-            )}
-
-            <div className="space-y-4 mt-8">
+          // Componente de práctica de gestos real
+          <div className="p-0">
+            <GesturePractice 
+              gestures={gestures}
+              onComplete={handleCompletePractice}
+              className="min-h-[600px]"
+            />
+            
+            <div className="p-6 bg-gray-50 border-t border-gray-200">
               <button
                 onClick={() => setShowPractice(false)}
                 className="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
               >
-                Revisar contenido
+                ← Revisar contenido de la lección
               </button>
             </div>
           </div>

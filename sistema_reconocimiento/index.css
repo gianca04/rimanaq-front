@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
