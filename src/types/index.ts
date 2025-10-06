@@ -21,9 +21,18 @@ export interface Lesson {
   time_minutes: number;
   created_at: string;
   updated_at: string;
+  content?: LessonContentStep[] | null;
+  difficulty_label?: string;
+  formatted_duration?: string;
+  progress_count?: number;
   course?: {
     id: number;
     name: string;
+    description?: string;
+    image_path?: string;
+    color?: string;
+    created_at?: string;
+    updated_at?: string;
   };
   gestures?: Gesture[];
   progress?: Progress[];
@@ -122,12 +131,26 @@ export interface CourseWithLevels {
   levels: Level[];
 }
 
-// Tipos para componentes de UI
+// Tipos para componentes de UI (legacy - mantener por compatibilidad)
 export interface LessonContent {
   type: 'text' | 'quiz' | 'exercise' | 'video';
   content: string;
   options?: string[];
   correctAnswer?: number;
+}
+
+// Nuevos tipos para el contenido dinámico de lecciones
+export interface LessonContentStep {
+  index: number;
+  titulo: string;
+  descripcion: string;
+  contenido: string;
+  media: LessonMedia;
+}
+
+export interface LessonMedia {
+  tipo: 'image' | 'video';
+  url: string;
 }
 
 // Tipos para autenticación
