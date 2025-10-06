@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ArrowLeft, Camera, Download, AlertCircle, Activity } from 'lucide-react';
+import { ArrowLeft, Camera, Download, AlertCircle, Activity, Upload, Play, Square, FileText } from 'lucide-react';
 import { mediaPipeService, type MediaPipeResults } from '../services/MediaPipeService';
+import { gesturePracticeService } from '../services/GesturePracticeService';
+import type { GestureData, PracticeSession, PracticeResult } from '../types/gesture';
 
 interface TrackingTestProps {
   onBack: () => void;
@@ -9,12 +11,19 @@ interface TrackingTestProps {
 const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isLoading, setIsLoading] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastResults, setLastResults] = useState<MediaPipeResults | null>(null);
   const [serviceStatus, setServiceStatus] = useState(mediaPipeService.getStatus());
+  
+  // Estados para práctica de gestos
+  const [importedGesture, setImportedGesture] = useState<GestureData | null>(null);
+  const [practiceSession, setPracticeSession] = useState<PracticeSession | null>(null);
+  const [currentSimilarity, setCurrentSimilarity] = useState(0);
+  const [similarityThreshold, setSimilarityThreshold] = useState(80);
 
   // Función para exportar los datos de tracking
   const exportTrackingData = (results: MediaPipeResults) => {
@@ -46,6 +55,68 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
     
     // Usar el método de dibujo del servicio singleton
     mediaPipeService.drawResults(canvasRef.current, results, videoRef.current);
+    
+    // Procesar práctica si hay una sesión activa
+    if (practiceSession && practiceSession.isActive && results.leftHandLandmarks) {
+      const landmarks = [results.leftHandLandmarks]; // Convertir a formato esperado
+      const practiceResult = gesturePracticeService.processCurrentFrame(landmarks);
+      if (practiceResult) {
+        setCurrentSimilarity(practiceResult.similarity);
+      }
+    }
+  };
+
+  // Funciones para práctica de gestos
+  const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const gesture = await gesturePracticeService.importGestureFromFile(file);
+      setImportedGesture(gesture);
+      console.log(`✅ Gesto importado: "${gesture.name}" con ${gesture.frameCount} frames`);
+    } catch (error) {
+      console.error('Error al importar gesto:', error);
+      alert('Error al cargar el archivo de gesto. Verifica que sea un archivo JSON válido.');
+    }
+  };
+
+  const startPractice = () => {
+    if (!importedGesture) {
+      alert('Primero debes importar un gesto para practicar.');
+      return;
+    }
+
+    if (!isTracking) {
+      alert('Inicia el tracking antes de comenzar la práctica.');
+      return;
+    }
+
+    const session = gesturePracticeService.startPracticeSession(importedGesture, similarityThreshold);
+    setPracticeSession(session);
+    setCurrentSimilarity(0);
+
+    // Configurar callbacks
+    gesturePracticeService.setOnFrameProgress((frameIndex, total, similarity) => {
+      console.log(`Frame ${frameIndex + 1}/${total} - Similitud: ${Math.round(similarity)}%`);
+    });
+
+    gesturePracticeService.setOnSessionComplete((results: PracticeResult[]) => {
+      const avgSimilarity = results.reduce((sum, r) => sum + r.similarity, 0) / results.length;
+      alert(`🎉 ¡Práctica completada!\nGesto: ${importedGesture.name}\nSimilitud promedio: ${Math.round(avgSimilarity)}%`);
+      setPracticeSession(null);
+      setCurrentSimilarity(0);
+    });
+  };
+
+  const stopPractice = () => {
+    gesturePracticeService.stopPracticeSession();
+    setPracticeSession(null);
+    setCurrentSimilarity(0);
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
 
@@ -234,6 +305,116 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
                     </div>
                   </div>
 
+                  {/* Sistema de Práctica de Gestos */}
+                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg space-y-4">
+                    <h3 className="font-semibold text-blue-800 mb-2">
+                      🎯 Sistema de Práctica de Gestos
+                    </h3>
+                    
+                    {/* Importar gesto */}
+                    <div className="flex items-center space-x-4">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        onChange={handleFileImport}
+                        className="hidden"
+                      />
+                      <button
+                        onClick={triggerFileInput}
+                        className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span>Importar Gesto JSON</span>
+                      </button>
+                      
+                      {importedGesture && (
+                        <div className="flex items-center space-x-2 text-green-700">
+                          <FileText className="w-4 h-4" />
+                          <span className="font-medium">{importedGesture.name}</span>
+                          <span className="text-sm">({importedGesture.frameCount} frames)</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Controles de práctica */}
+                    {importedGesture && (
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-4">
+                          <label className="text-sm font-medium text-blue-700">
+                            Umbral de similitud:
+                          </label>
+                          <input
+                            type="range"
+                            min="50"
+                            max="95"
+                            value={similarityThreshold}
+                            onChange={(e) => setSimilarityThreshold(parseInt(e.target.value))}
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-mono text-blue-700">
+                            {similarityThreshold}%
+                          </span>
+                        </div>
+
+                        <div className="flex items-center space-x-3">
+                          {!practiceSession?.isActive ? (
+                            <button
+                              onClick={startPractice}
+                              disabled={!isTracking}
+                              className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors"
+                            >
+                              <Play className="w-4 h-4" />
+                              <span>Iniciar Práctica</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={stopPractice}
+                              className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                            >
+                              <Square className="w-4 h-4" />
+                              <span>Detener Práctica</span>
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Información de progreso */}
+                        {practiceSession?.isActive && (
+                          <div className="bg-white p-3 rounded border">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-medium">
+                                Frame {(practiceSession.currentFrameIndex || 0) + 1} de {practiceSession.gesture.frameCount}
+                              </span>
+                              <span className="text-sm font-mono">
+                                Similitud: {Math.round(currentSimilarity)}%
+                              </span>
+                            </div>
+                            
+                            {/* Barra de progreso */}
+                            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                              <div
+                                className={`h-2 rounded-full transition-all duration-300 ${
+                                  currentSimilarity >= similarityThreshold ? 'bg-green-500' : 'bg-yellow-500'
+                                }`}
+                                style={{ width: `${Math.min(currentSimilarity, 100)}%` }}
+                              />
+                            </div>
+                            
+                            {/* Progreso de frames */}
+                            <div className="w-full bg-gray-200 rounded-full h-1">
+                              <div
+                                className="h-1 rounded-full bg-blue-500 transition-all duration-300"
+                                style={{ 
+                                  width: `${((practiceSession.completedFrames?.length || 0) / practiceSession.gesture.frameCount) * 100}%` 
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Información */}
                   <div className="bg-gray-50 p-4 rounded-lg space-y-4">
                     <div>
@@ -309,9 +490,10 @@ const TrackingTest: React.FC<TrackingTestProps> = ({ onBack }) => {
                     <ul className="text-sm text-blue-700 space-y-1">
                       <li>• Haz clic en "Iniciar" para activar el tracking (WASM se inicializa una sola vez)</li>
                       <li>• Permite el acceso a la cámara cuando te lo solicite</li>
-                      <li>• El servicio singleton mantiene la instancia WASM entre sesiones</li>
                       <li>• Colócate frente a la cámara con buena iluminación</li>
-                      <li>• Realiza gestos de lengua de señas para probar el tracking</li>
+                      <li>• Para practicar: importa un archivo JSON con gestos secuenciales</li>
+                      <li>• Ajusta el umbral de similitud según tu nivel (80% recomendado)</li>
+                      <li>• Replica cada frame del gesto hasta completar la secuencia</li>
                       <li>• Haz clic en "Exportar" para descargar los datos de tracking</li>
                     </ul>
                   </div>
