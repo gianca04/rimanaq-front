@@ -5,7 +5,6 @@ import LessonModal from './components/LessonModal';
 import Header from './components/Header';
 import AuthScreen from './components/AuthScreen';
 import Profile from './components/Profile';
-import TrackingTest from './components/TrackingTest';
 import { CourseWithLevels, Level, UserProgress } from './types';
 import { getUIFormattedCourses } from './services/courseService';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -15,7 +14,7 @@ import { authService } from './services/authService';
 function AuthenticatedApp() {
   const [selectedCourse, setSelectedCourse] = useState<CourseWithLevels | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
-  const [viewMode, setViewMode] = useState<'courses' | 'levels' | 'lesson' | 'profile' | 'tracking'>('courses');
+  const [viewMode, setViewMode] = useState<'courses' | 'levels' | 'lesson' | 'profile'>('courses');
   const [userProgress, setUserProgress] = useState<UserProgress>({});
   const [courses, setCourses] = useState<CourseWithLevels[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,14 +104,6 @@ function AuthenticatedApp() {
     setViewMode('courses');
   };
 
-  const handleGoToTracking = () => {
-    setViewMode('tracking');
-  };
-
-  const handleBackFromTracking = () => {
-    setViewMode('courses');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-500 via-teal-400 to-green-400 flex items-center justify-center">
@@ -135,7 +126,6 @@ function AuthenticatedApp() {
         selectedCourse={selectedCourse}
         onBackToCourses={handleBackToCourses}
         onGoToProfile={handleGoToProfile}
-        onGoToTracking={handleGoToTracking}
         totalStars={selectedCourse ? getTotalStars(selectedCourse.id) : 0}
         completedLevels={selectedCourse ? getCompletedLevels(selectedCourse.id) : 0}
         totalLevels={selectedCourse?.levels?.length || 0}
@@ -144,8 +134,6 @@ function AuthenticatedApp() {
       {/* Contenido principal */}
       {viewMode === 'profile' ? (
         <Profile onBack={handleBackFromProfile} />
-      ) : viewMode === 'tracking' ? (
-        <TrackingTest onBack={handleBackFromTracking} />
       ) : (
         <main className="container mx-auto px-4 py-6">
           {viewMode === 'courses' && (
