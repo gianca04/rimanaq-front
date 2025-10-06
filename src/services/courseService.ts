@@ -1,4 +1,4 @@
-import { Course, Lesson, CoursesListResponse, CourseDetailResponse, LessonsListResponse, LessonDetailResponse, CourseWithLevels, Level, LessonContent } from '../types';
+import { Course, Lesson, LessonsListResponse, LessonDetailResponse, CourseWithLevels, Level, LessonContent } from '../types';
 import { authService } from './authService';
 import { API_CONFIG } from '../config/constants';
 
@@ -17,22 +17,25 @@ export class CourseService {
    */
   static async getAllCourses(): Promise<Course[]> {
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}/courses`, {
+      const response = await authService.authenticatedFetch(`${API_CONFIG.BASE_URL}/courses`, {
         method: 'GET',
-        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
       }
       
-      const apiResponse: CoursesListResponse = await response.json();
+      const apiResponse = await response.json();
       
-      if (!apiResponse.success) {
+      // El endpoint real devuelve directamente un array de cursos, no envuelto en success/data
+      // Adaptar según la respuesta real del API
+      if (Array.isArray(apiResponse)) {
+        return apiResponse;
+      } else if (apiResponse.success && apiResponse.data) {
+        return apiResponse.data;
+      } else {
         throw new Error(apiResponse.message || 'Error al obtener los cursos');
       }
-      
-      return apiResponse.data;
     } catch (error) {
       console.error('Error al obtener los cursos:', error);
       throw new Error('No se pudieron cargar los cursos. Verifica tu conexión a internet.');
@@ -46,9 +49,8 @@ export class CourseService {
    */
   static async getCourseById(id: number): Promise<Course> {
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}/courses/${id}`, {
+      const response = await authService.authenticatedFetch(`${API_CONFIG.BASE_URL}/courses/${id}`, {
         method: 'GET',
-        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -58,13 +60,17 @@ export class CourseService {
         throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
       }
       
-      const apiResponse: CourseDetailResponse = await response.json();
+      const apiResponse = await response.json();
       
-      if (!apiResponse.success) {
+      // Adaptar respuesta según formato del API real
+      if (apiResponse.success && apiResponse.data) {
+        return apiResponse.data;
+      } else if (apiResponse.id) {
+        // Si el API devuelve directamente el curso
+        return apiResponse;
+      } else {
         throw new Error(apiResponse.message || 'Error al obtener el curso');
       }
-      
-      return apiResponse.data;
     } catch (error) {
       console.error(`Error al obtener el curso con ID ${id}:`, error);
       throw error;
@@ -228,8 +234,9 @@ export const convertCourseToUI = async (course: Course): Promise<CourseWithLevel
     id: course.id.toString(),
     title: course.name,
     description: course.description,
-    color: course.color,
+    color: course.color || '#3498db', // Color por defecto si no se proporciona
     icon: '🤟', // Icono por defecto para LSP
+    image_path: course.image_path || undefined, // Incluir la imagen del curso
     levels: levels
   };
 };

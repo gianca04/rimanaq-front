@@ -118,6 +118,7 @@ export interface CourseWithLevels {
   description: string;
   color: string;
   icon: string;
+  image_path?: string; // Nueva propiedad para la imagen del curso
   levels: Level[];
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Play, Star, Trophy } from 'lucide-react';
 import { CourseWithLevels, UserProgress } from '../types';
+import { API_CONFIG } from '../config/constants';
 
 interface CourseSelectionProps {
   courses: CourseWithLevels[];
@@ -17,11 +18,26 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
   loading = false,
   error = null
 }) => {
-  const getCourseStats = (courseId: number) => {
-    const progress = userProgress[courseId.toString()] || {};
+  const getCourseStats = (courseId: string) => {
+    const progress = userProgress[courseId] || {};
     const completed = Object.values(progress).filter(lesson => lesson?.completed).length;
     const totalScore = Object.values(progress).reduce((total, lesson) => total + (lesson?.score || 0), 0);
     return { completed, totalScore };
+  };
+
+  // Helper para construir la URL completa de la imagen
+  const getImageUrl = (imagePath: string | undefined) => {
+    if (!imagePath) return null;
+    
+    // Si ya es una URL completa, devolverla tal como está
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    // Si es una ruta relativa, construir la URL completa
+    // Asumiendo que el servidor Laravel sirve las imágenes desde el dominio base
+    const baseUrl = API_CONFIG.BASE_URL.replace('/api', ''); // Quitar /api del final
+    return `${baseUrl}${imagePath}`;
   };
 
   if (loading) {
@@ -92,12 +108,34 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
               <div 
                 className="h-48 relative overflow-hidden"
                 style={{ 
-                  background: `linear-gradient(135deg, ${course.color}, ${course.color}80)`
+                  background: getImageUrl(course.image_path) 
+                    ? 'transparent' 
+                    : `linear-gradient(135deg, ${course.color}, ${course.color}80)`
                 }}
               >
-                <div className="absolute inset-0 bg-black/20"></div>
+                {getImageUrl(course.image_path) ? (
+                  <>
+                    <img 
+                      src={getImageUrl(course.image_path)!} 
+                      alt={course.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Fallback si la imagen no carga
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.style.background = `linear-gradient(135deg, ${course.color}, ${course.color}80)`;
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/20"></div>
+                  </>
+                ) : (
+                  <div className="absolute inset-0 bg-black/20"></div>
+                )}
                 
-                {/* Icono por defecto para LSP */}
+                {/* Icono para LSP - mostrar solo si no hay imagen o como overlay */}
                 <div className="absolute top-4 right-4 text-4xl">
                   🤟
                 </div>

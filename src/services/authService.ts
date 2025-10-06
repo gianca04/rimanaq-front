@@ -333,6 +333,7 @@ if (import.meta.env.DEV) {
     getToken: () => string | null;
     getUser: () => User | null;
     isAuthenticated: () => boolean;
+    testCoursesEndpoint: () => Promise<void>;
   }
 
   (window as typeof window & { debugAuth: WindowDebugAuth }).debugAuth = {
@@ -342,6 +343,16 @@ if (import.meta.env.DEV) {
     getToken: () => authService.getToken(),
     getUser: () => authService.getUser(),
     isAuthenticated: () => authService.isAuthenticated(),
+    testCoursesEndpoint: async () => {
+      try {
+        const response = await authService.authenticatedFetch(`${API_CONFIG.BASE_URL}/courses`);
+        const data = await response.json();
+        console.log('📚 Respuesta del endpoint de cursos:', data);
+      } catch (error) {
+        console.error('❌ Error al probar endpoint de cursos:', error);
+      }
+    }
   };
-  console.log('🧪 Métodos de debug de autenticación disponibles en window.debugAuth');
+  console.log('🧪 Métodos de debug disponibles en window.debugAuth');
+  console.log('📚 Para probar cursos: window.debugAuth.testCoursesEndpoint()');
 }
