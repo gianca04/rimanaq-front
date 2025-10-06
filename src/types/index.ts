@@ -41,12 +41,31 @@ export interface Lesson {
 export interface Gesture {
   id: number;
   lesson_id: number;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
   video_url?: string;
   image_url?: string;
+  gesture_data: GestureData;
   created_at: string;
   updated_at: string;
+}
+
+export interface GestureData {
+  name: string;
+  frames: GestureFrame[];
+  frameCount: number;
+  isSequential: boolean;
+}
+
+export interface GestureFrame {
+  id: number;
+  timestamp: string;
+  landmarks: unknown[];
+  landmarksNormalizados: unknown[];
+  handedness: unknown[];
+  gestureName: string;
+  frameIndex: number;
+  sequenceMetadata: Record<string, unknown>;
 }
 
 export interface Progress {

@@ -1,13 +1,14 @@
 /**
  * MediaPipe Service - Singleton para manejar la instancia WASM
  * Evita re-inicializaciones y problemas de reactividad de React
+ * Actualizado para usar las librerías específicas de MediaPipe Hands
  */
 
 import type { 
   Landmark,
-  HolisticInterface,
+  HandsInterface,
   CameraInterface,
-  HolisticResults
+  HandsResults
 } from '../types/mediapipe';
 
 interface MediaPipeResults {
@@ -22,7 +23,7 @@ type OnResultsCallback = (results: MediaPipeResults) => void;
 
 class MediaPipeService {
   private static instance: MediaPipeService | null = null;
-  private holistic: HolisticInterface | null = null;
+  private hands: HandsInterface | null = null;
   private camera: CameraInterface | null = null;
   private isInitialized: boolean = false;
   private isInitializing: boolean = false;
@@ -50,11 +51,11 @@ class MediaPipeService {
    * Verifica si MediaPipe está disponible en el window global
    */
   private checkMediaPipeAvailability(): boolean {
-    return !!window.Holistic && !!window.Camera && !!window.drawConnectors;
+    return !!window.Hands && !!window.Camera && !!window.drawConnectors;
   }
 
   /**
-   * Inicializa MediaPipe Holistic una sola vez
+   * Inicializa MediaPipe Hands una sola vez
    */
   async initialize(): Promise<boolean> {
     if (this.isInitialized) {
@@ -77,32 +78,43 @@ class MediaPipeService {
         throw new Error('MediaPipe no está disponible. Verifica que los scripts estén cargados.');
       }
 
-      // Crear instancia Holistic SOLO UNA VEZ
-      this.holistic = new window.Holistic({
+      // Crear instancia Hands SOLO UNA VEZ
+      this.hands = new window.Hands({
         locateFile: (file: string) => 
-          `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/${file}`
+          `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
       });
 
-      // Configurar opciones
-      this.holistic.setOptions({
+      // Configurar opciones para detección de manos
+      this.hands.setOptions({
         modelComplexity: 1,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        smoothSegmentation: false,
-        refineFaceLandmarks: true,
+        maxNumHands: 2,
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5
       });
 
       // Configurar callback interno
-      this.holistic.onResults((results: HolisticResults) => {
+      this.hands.onResults((results: HandsResults) => {
         const formattedResults: MediaPipeResults = {
           timestamp: Date.now(),
-          poseLandmarks: results.poseLandmarks || null,
-          leftHandLandmarks: results.leftHandLandmarks || null,
-          rightHandLandmarks: results.rightHandLandmarks || null,
-          faceLandmarks: results.faceLandmarks || null,
+          poseLandmarks: null, // Hands no detecta pose
+          leftHandLandmarks: null,
+          rightHandLandmarks: null,
+          faceLandmarks: null, // Hands no detecta cara
         };
+
+        // Procesar las manos detectadas
+        if (results.multiHandLandmarks && results.multiHandedness) {
+          for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+            const handedness = results.multiHandedness[i];
+            const landmarks = results.multiHandLandmarks[i];
+            
+            if (handedness.label === 'Left') {
+              formattedResults.leftHandLandmarks = landmarks;
+            } else if (handedness.label === 'Right') {
+              formattedResults.rightHandLandmarks = landmarks;
+            }
+          }
+        }
 
         // Llamar callback del componente si existe
         if (this.onResultsCallback) {
@@ -123,7 +135,7 @@ class MediaPipeService {
   }
 
   /**
-   * Inicia la cámara y conecta con Holistic
+   * Inicia la cámara y conecta con Hands
    */
   async startCamera(videoElement: HTMLVideoElement): Promise<void> {
     if (!this.isInitialized) {
@@ -141,8 +153,8 @@ class MediaPipeService {
 
       this.camera = new window.Camera(videoElement, {
         onFrame: async () => {
-          if (this.holistic && this.videoElement) {
-            await this.holistic.send({ image: this.videoElement });
+          if (this.hands && this.videoElement) {
+            await this.hands.send({ image: this.videoElement });
           }
         },
         width: 640,
@@ -199,38 +211,23 @@ class MediaPipeService {
 
     const drawConnectors = window.drawConnectors;
     const drawLandmarks = window.drawLandmarks;
-    const Holistic = window.Holistic;
+    const Hands = window.Hands;
 
-    if (drawConnectors && drawLandmarks && Holistic) {
-      // Pose (cuerpo) - Azul
-      if (results.poseLandmarks) {
-        drawConnectors(canvasCtx, results.poseLandmarks, Holistic.POSE_CONNECTIONS, 
-          { color: '#1E90FF', lineWidth: 4 });
-        drawLandmarks(canvasCtx, results.poseLandmarks, 
-          { color: '#1E90FF', lineWidth: 2, radius: 2 });
-      }
-
-      // Cara - Cián
-      if (results.faceLandmarks) {
-        drawConnectors(canvasCtx, results.faceLandmarks, Holistic.FACEMESH_TESSELATION,
-          { color: '#00FFFF', lineWidth: 1 });
-        drawLandmarks(canvasCtx, results.faceLandmarks, 
-          { color: '#00FFFF', lineWidth: 1, radius: 1 });
-      }
-
-      // Manos - Azul para ambas
+    if (drawConnectors && drawLandmarks && Hands) {
+      // Mano izquierda - Verde
       if (results.leftHandLandmarks) {
-        drawConnectors(canvasCtx, results.leftHandLandmarks, Holistic.HAND_CONNECTIONS,
-          { color: '#1E90FF', lineWidth: 2 });
+        drawConnectors(canvasCtx, results.leftHandLandmarks, Hands.HAND_CONNECTIONS,
+          { color: '#00FF00', lineWidth: 3 });
         drawLandmarks(canvasCtx, results.leftHandLandmarks, 
-          { color: '#1E90FF', lineWidth: 2, radius: 2 });
+          { color: '#00FF00', lineWidth: 2, radius: 3 });
       }
 
+      // Mano derecha - Azul
       if (results.rightHandLandmarks) {
-        drawConnectors(canvasCtx, results.rightHandLandmarks, Holistic.HAND_CONNECTIONS,
-          { color: '#1E90FF', lineWidth: 2 });
+        drawConnectors(canvasCtx, results.rightHandLandmarks, Hands.HAND_CONNECTIONS,
+          { color: '#1E90FF', lineWidth: 3 });
         drawLandmarks(canvasCtx, results.rightHandLandmarks, 
-          { color: '#1E90FF', lineWidth: 2, radius: 2 });
+          { color: '#1E90FF', lineWidth: 2, radius: 3 });
       }
     }
 
@@ -258,15 +255,15 @@ class MediaPipeService {
     this.stopCamera();
     this.setOnResultsCallback(null);
 
-    if (this.holistic) {
+    if (this.hands) {
       try {
-        if (this.holistic.close) {
-          this.holistic.close();
+        if (this.hands.close) {
+          this.hands.close();
         }
-        this.holistic = null;
-        console.log('✅ MediaPipeService: Holistic cerrado');
+        this.hands = null;
+        console.log('✅ MediaPipeService: Hands cerrado');
       } catch (error) {
-        console.error('❌ MediaPipeService: Error al cerrar Holistic:', error);
+        console.error('❌ MediaPipeService: Error al cerrar Hands:', error);
       }
     }
 

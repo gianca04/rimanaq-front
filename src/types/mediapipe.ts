@@ -1,5 +1,5 @@
 /**
- * Definiciones de tipos para MediaPipe Holistic
+ * Definiciones de tipos para MediaPipe Hands
  * Evita errores de TypeScript con la librería externa
  */
 
@@ -11,41 +11,38 @@ export interface Landmark {
   visibility?: number;
 }
 
-// Resultados de MediaPipe
-export interface HolisticResults {
-  poseLandmarks?: Landmark[];
-  leftHandLandmarks?: Landmark[];
-  rightHandLandmarks?: Landmark[];
-  faceLandmarks?: Landmark[];
+// Resultados de MediaPipe Hands
+export interface HandsResults {
+  multiHandLandmarks?: Landmark[][];
+  multiHandedness?: Array<{
+    index: number;
+    score: number;
+    label: string;
+  }>;
   image?: HTMLVideoElement | HTMLCanvasElement | HTMLImageElement;
   timestamp?: number;
 }
 
-// Opciones de configuración
-export interface HolisticOptions {
-  modelComplexity?: 0 | 1 | 2;
-  smoothLandmarks?: boolean;
-  enableSegmentation?: boolean;
-  smoothSegmentation?: boolean;
-  refineFaceLandmarks?: boolean;
+// Opciones de configuración para Hands
+export interface HandsOptions {
+  modelComplexity?: 0 | 1;
+  maxNumHands?: number;
   minDetectionConfidence?: number;
   minTrackingConfidence?: number;
 }
 
-// Clase Holistic
-export interface HolisticInterface {
-  setOptions(options: HolisticOptions): void;
-  onResults(callback: (results: HolisticResults) => void): void;
+// Clase Hands
+export interface HandsInterface {
+  setOptions(options: HandsOptions): void;
+  onResults(callback: (results: HandsResults) => void): void;
   send(inputs: { image: HTMLVideoElement | HTMLCanvasElement | HTMLImageElement }): Promise<void>;
   close?(): void;
 }
 
-// Constructor de Holistic
-export interface HolisticConstructor {
-  new (config: { locateFile: (file: string) => string }): HolisticInterface;
-  POSE_CONNECTIONS: Array<[number, number]>;
+// Constructor de Hands
+export interface HandsConstructor {
+  new (config: { locateFile: (file: string) => string }): HandsInterface;
   HAND_CONNECTIONS: Array<[number, number]>;
-  FACEMESH_TESSELATION: Array<[number, number]>;
 }
 
 // Opciones de cámara
@@ -90,7 +87,7 @@ export type DrawLandmarksFunction = (
 // Extensión del objeto Window para MediaPipe
 declare global {
   interface Window {
-    Holistic: HolisticConstructor;
+    Hands: HandsConstructor;
     Camera: CameraConstructor;
     drawConnectors: DrawConnectorsFunction;
     drawLandmarks: DrawLandmarksFunction;

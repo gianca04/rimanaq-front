@@ -152,6 +152,7 @@ const LessonModal: React.FC<LessonModalProps> = ({
           {!isCompleted ? (
             <LessonContentRenderer
               content={lessonData?.content || null}
+              gestures={lessonData?.gestures || null}
               onComplete={handleComplete}
               className="p-6"
             />

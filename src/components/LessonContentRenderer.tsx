@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { LessonContentStep } from '../types';
+import { LessonContentStep, Gesture } from '../types';
 
 interface LessonContentRendererProps {
   content: LessonContentStep[] | null;
+  gestures?: Gesture[] | null;
   onComplete?: () => void;
   className?: string;
 }
 
 const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
   content,
+  gestures,
   onComplete,
   className = ''
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showPractice, setShowPractice] = useState(false);
+
+  // Debug: Log gestures cuando se reciban
+  React.useEffect(() => {
+    if (gestures && gestures.length > 0) {
+      console.log('🤟 Gestures recibidos para práctica:', gestures);
+    }
+  }, [gestures]);
 
   // Si no hay contenido, mostrar mensaje
   if (!content || content.length === 0) {
@@ -85,16 +94,31 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
       {/* Contenido principal */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden min-h-[500px]">
         {showPractice ? (
-          // Sección de práctica
-          <div className="p-8 text-center">
-            <div className="text-6xl mb-6">🎯</div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              ¡Práctica!
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Ahora es momento de practicar lo aprendido en esta lección.
-            </p>
-            <div className="space-y-4">
+          // Sección de práctica con gestures
+          <div className="p-8">
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-6">🎯</div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                ¡Práctica!
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                Ahora es momento de practicar los gestos aprendidos en esta lección.
+              </p>
+            </div>
+
+            {/* Mostrar gestures si existen */}
+            {gestures && gestures.length > 0 ? (
+              <GesturesPractice gestures={gestures} />
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-4xl mb-4">🤷‍♂️</div>
+                <p className="text-gray-600 mb-8">
+                  No hay gestos específicos para practicar en esta lección.
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-4 mt-8">
               <button
                 onClick={handleCompletePractice}
                 className="w-full px-6 py-4 bg-green-500 text-white rounded-xl font-semibold text-lg hover:bg-green-600 transition-colors"
@@ -249,6 +273,88 @@ const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ med
       <div className="text-center">
         <div className="text-4xl mb-2">❓</div>
         <p>Tipo de media no soportado: {media.tipo}</p>
+      </div>
+    </div>
+  );
+};
+
+// Componente para mostrar los gestures en la práctica
+const GesturesPractice: React.FC<{ gestures: Gesture[] }> = ({ gestures }) => {
+  return (
+    <div className="space-y-6">
+      <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
+        Gestos para practicar:
+      </h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {gestures.map((gesture) => (
+          <div
+            key={gesture.id}
+            className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 border-2 border-blue-200 hover:border-blue-300 transition-colors"
+          >
+            {/* Header del gesto */}
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold">🤟</span>
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-800">
+                  {gesture.gesture_data.name}
+                </h4>
+                <p className="text-sm text-gray-600">
+                  {gesture.gesture_data.frameCount} frames • {gesture.gesture_data.isSequential ? 'Secuencial' : 'Estático'}
+                </p>
+              </div>
+            </div>
+
+            {/* Información del gesto */}
+            <div className="space-y-3">
+              <div className="bg-white/50 rounded-lg p-3">
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Tipo:</span> {gesture.gesture_data.isSequential ? 'Gesto en movimiento' : 'Gesto estático'}
+                </p>
+              </div>
+
+              <div className="bg-white/50 rounded-lg p-3">
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Frames:</span> {gesture.gesture_data.frameCount} posiciones registradas
+                </p>
+              </div>
+
+              {/* Información adicional si existe */}
+              {gesture.description && (
+                <div className="bg-white/50 rounded-lg p-3">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">Descripción:</span> {gesture.description}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Botón para practicar (placeholder por ahora) */}
+            <div className="mt-4">
+              <button className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
+                Ver detalles del gesto
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Información adicional */}
+      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mt-6">
+        <div className="flex items-start space-x-3">
+          <div className="text-2xl">💡</div>
+          <div>
+            <h4 className="font-bold text-yellow-800 mb-2">Cómo practicar:</h4>
+            <ul className="text-sm text-yellow-700 space-y-1">
+              <li>• Observa cuidadosamente cada gesto</li>
+              <li>• Practica frente a una cámara si es posible</li>
+              <li>• Repite los movimientos varias veces</li>
+              <li>• Presta atención a la posición de las manos</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
