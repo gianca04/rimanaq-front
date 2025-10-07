@@ -163,7 +163,6 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
   };
 
   return (
-    <div className={`bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 p-6 rounded-2xl ${className}`}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-slate-800 mb-2 flex items-center justify-center gap-3">
@@ -385,7 +384,6 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
             )}
           </div>
         </div>
-      </div>
 
       {isCompleted && gestureData && (
         <CompletionMessage
