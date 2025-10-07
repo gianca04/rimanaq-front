@@ -205,43 +205,120 @@ const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ med
   }
 
   if (media.tipo === 'video') {
-    // Convertir URL de YouTube shorts a embed
+    // Convertir URL de YouTube a formato embed válido
     const getYouTubeEmbedUrl = (url: string) => {
-      const shortsMatch = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
-      if (shortsMatch) {
-        return `https://www.youtube.com/embed/${shortsMatch[1]}`;
+      // Limpiar la URL de parámetros innecesarios
+      const cleanUrl = url.trim();
+      
+      // Patrones para diferentes formatos de YouTube
+      const patterns = [
+        // YouTube Shorts: https://www.youtube.com/shorts/VIDEO_ID
+        /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+        // YouTube Watch: https://www.youtube.com/watch?v=VIDEO_ID
+        /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+        // YouTube Watch con parámetros: https://www.youtube.com/watch?v=VIDEO_ID&other=params
+        /(?:youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]{11})/,
+        // YouTube corta: https://youtu.be/VIDEO_ID
+        /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+        // YouTube embed ya existente: https://www.youtube.com/embed/VIDEO_ID
+        /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
+      ];
+      
+      for (const pattern of patterns) {
+        const match = cleanUrl.match(pattern);
+        if (match && match[1]) {
+          // Construir URL de embed con parámetros de seguridad
+          return `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1&fs=1&cc_load_policy=0&iv_load_policy=3&autohide=1`;
+        }
       }
       
-      const watchMatch = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
-      if (watchMatch) {
-        return `https://www.youtube.com/embed/${watchMatch[1]}`;
+      // Si no es YouTube, verificar si es otra plataforma de video
+      if (cleanUrl.includes('vimeo.com')) {
+        const vimeoMatch = cleanUrl.match(/vimeo\.com\/(\d+)/);
+        if (vimeoMatch) {
+          return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+        }
       }
       
-      const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
-      if (embedMatch) {
-        return url;
+      // Para URLs directas de video (mp4, webm, etc.)
+      if (cleanUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i)) {
+        return cleanUrl;
       }
       
-      return url; // Fallback para otras URLs
+      // Fallback: si no reconoce el formato, devolver la URL original
+      console.warn('URL de video no reconocida:', cleanUrl);
+      return cleanUrl;
     };
 
     const embedUrl = getYouTubeEmbedUrl(media.url);
 
+    // Verificar si es un video directo (mp4, webm, etc.)
+    const isDirectVideo = embedUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i);
+    
     return (
-      <div className="relative rounded-xl overflow-hidden bg-gray-100">
+      <div className="relative rounded-xl overflow-hidden bg-gray-900">
         <div className="aspect-video">
-          <iframe
-            src={embedUrl}
-            title="Video de la lección"
-            className="w-full h-full"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            onError={() => {
-              console.error('Error al cargar el video:', media.url);
-            }}
-          />
+          {isDirectVideo ? (
+            // Renderizar video directo
+            <video
+              src={embedUrl}
+              title="Video de la lección"
+              className="w-full h-full object-contain"
+              controls
+              preload="metadata"
+              onError={(e) => {
+                console.error('Error al cargar el video directo:', media.url);
+                const target = e.target as HTMLVideoElement;
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = `
+                    <div class="flex items-center justify-center h-full text-white">
+                      <div class="text-center p-6">
+                        <div class="text-4xl mb-4">📹</div>
+                        <p class="font-semibold mb-2">Error al cargar el video</p>
+                        <p class="text-sm text-gray-300">Formato no compatible o URL inválida</p>
+                      </div>
+                    </div>
+                  `;
+                }
+              }}
+            >
+              Tu navegador no soporta la reproducción de video.
+            </video>
+          ) : (
+            // Renderizar iframe para YouTube, Vimeo, etc.
+            <iframe
+              src={embedUrl}
+              title="Video de la lección"
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+              onError={(e) => {
+                console.error('Error al cargar el iframe:', media.url);
+                const target = e.target as HTMLIFrameElement;
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = `
+                    <div class="flex items-center justify-center h-full text-white">
+                      <div class="text-center p-6">
+                        <div class="text-4xl mb-4">🚫</div>
+                        <p class="font-semibold mb-2">Video no disponible</p>
+                        <p class="text-sm text-gray-300">El video no se puede mostrar debido a restricciones</p>
+                        <a href="${media.url}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-block mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm">
+                          Abrir en nueva ventana
+                        </a>
+                      </div>
+                    </div>
+                  `;
+                }
+              }}
+            />
+          )}
         </div>
+        
+
       </div>
     );
   }
