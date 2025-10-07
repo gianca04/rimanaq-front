@@ -73,7 +73,7 @@ const LessonModal: React.FC<LessonModalProps> = ({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div>
         <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 text-center">
           <Loader className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -108,11 +108,11 @@ const LessonModal: React.FC<LessonModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[98vh] sm:max-h-[95vh] overflow-hidden">
         {/* Header */}
         <div 
-          className="h-20 relative"
+          className="h-16 sm:h-20 relative"
           style={{ 
             background: `linear-gradient(135deg, ${course.color}, ${course.color}80)`
           }}
@@ -122,69 +122,69 @@ const LessonModal: React.FC<LessonModalProps> = ({
           {/* Botón cerrar */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-gray-200 transition-colors p-1 sm:p-0"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
           {/* Información de la lección */}
-          <div className="absolute bottom-4 left-6 flex items-center space-x-4 text-white">
-            <div className="flex items-center space-x-2">
-              <BookOpen className="w-5 h-5" />
-              <span className="font-semibold">
+          <div className="absolute bottom-2 left-3 right-12 sm:bottom-4 sm:left-6 sm:right-16 flex flex-wrap items-center gap-2 sm:gap-4 text-white overflow-hidden">
+            <div className="flex items-center space-x-1 sm:space-x-2 min-w-0 flex-1">
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              <span className="font-semibold text-sm sm:text-base truncate">
                 {lessonData?.name || level.title}
               </span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4" />
-              <span className="text-sm">
+            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+              <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="text-xs sm:text-sm">
                 {lessonData?.time_minutes || level.estimatedTime} min
               </span>
             </div>
-            <div className={`px-3 py-1 rounded-full text-xs font-medium ${getDifficultyColor(lessonData?.difficulty || level.difficulty)}`}>
+            <div className={`px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ${getDifficultyColor(lessonData?.difficulty || level.difficulty)}`}>
               {lessonData?.difficulty || level.difficulty}
             </div>
           </div>
         </div>
 
         {/* Contenido principal */}
-        <div className="overflow-y-auto" style={{ maxHeight: 'calc(95vh - 80px)' }}>
+        <div className="overflow-y-auto max-h-[calc(98vh-64px)] sm:max-h-[calc(95vh-80px)]">
           {!isCompleted ? (
             <LessonContentRenderer
               content={lessonData?.content || null}
               gestures={lessonData?.gestures || null}
               onComplete={handleComplete}
-              className="p-6"
+              className="p-3 sm:p-6"
             />
           ) : (
             /* Pantalla de completado */
-            <div className="p-8 text-center">
-              <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+            <div className="p-4 sm:p-8 text-center">
+              <CheckCircle className="w-16 h-16 sm:w-20 sm:h-20 text-green-500 mx-auto mb-4 sm:mb-6" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
                 ¡Lección completada!
               </h2>
-              <p className="text-xl text-gray-600 mb-6">
+              <p className="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6 break-words">
                 Has terminado "{lessonData?.name || level.title}" exitosamente
               </p>
               
               {/* Puntuación */}
-              <div className="bg-green-50 rounded-xl p-6 mb-6 inline-block">
-                <Star className="w-8 h-8 text-yellow-500 mx-auto mb-2 fill-current" />
+              <div className="bg-green-50 rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 inline-block">
+                <Star className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500 mx-auto mb-2 fill-current" />
                 <div className="text-green-800">
-                  <span className="text-lg text-gray-600">Lección completada</span>
+                  <span className="text-base sm:text-lg text-gray-600">Lección completada</span>
                 </div>
               </div>
 
-              <div className="flex justify-center space-x-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <button
                   onClick={handleReviewLesson}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                  className="w-full sm:w-auto px-4 sm:px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-sm sm:text-base"
                 >
                   Revisar lección
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-8 py-3 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors text-sm sm:text-base"
                 >
                   Continuar
                 </button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Star, Lock, CheckCircle } from 'lucide-react';
+import { Clock, Star, Lock, CheckCircle, Trophy } from 'lucide-react';
 import { CourseWithLevels, Level, UserProgress } from '../types';
 
 interface LevelMapProps {
@@ -21,10 +21,10 @@ const LevelMap: React.FC<LevelMapProps> = ({
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'hard': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'easy': return 'bg-emerald-500/10 text-emerald-700 border-emerald-200';
+      case 'medium': return 'bg-amber-500/10 text-amber-700 border-amber-200';
+      case 'hard': return 'bg-rose-500/10 text-rose-700 border-rose-200';
+      default: return 'bg-slate-500/10 text-slate-700 border-slate-200';
     }
   };
 
@@ -43,11 +43,10 @@ const LevelMap: React.FC<LevelMapProps> = ({
         {[1, 2, 3].map((star) => (
           <Star
             key={star}
-            className={`w-5 h-5 ${
-              star <= stars 
-                ? 'text-yellow-400 fill-current' 
-                : 'text-gray-300'
-            }`}
+            className={`w-4 h-4 transition-all ${star <= stars
+              ? 'text-amber-400 fill-amber-400 drop-shadow-sm'
+              : 'text-slate-300'
+              }`}
           />
         ))}
       </div>
@@ -55,13 +54,17 @@ const LevelMap: React.FC<LevelMapProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">
+    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+      <div className="text-center mb-8 sm:mb-12 space-y-3">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-2">
+          <Trophy className="w-4 h-4 text-amber-400" />
+          <span className="text-sm font-medium text-white">Tu aventura de aprendizaje</span>
+        </div>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 tracking-tight">
           Mapa de Aventuras
         </h2>
-        <p className="text-white/80">
-          Completa cada nivel para desbloquear el siguiente
+        <p className="text-base sm:text-lg text-white/70 max-w-2xl mx-auto">
+          Completa cada nivel para desbloquear el siguiente desafío
         </p>
       </div>
 
@@ -90,7 +93,7 @@ const LevelMap: React.FC<LevelMapProps> = ({
                       onClick={() => isUnlocked && onSelectLevel(level)}
                     >
                       <div className={`h-4 bg-gradient-to-r ${course.color}`}></div>
-                      
+
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-3">
                           <h3 className="text-xl font-bold text-gray-800">
@@ -109,7 +112,7 @@ const LevelMap: React.FC<LevelMapProps> = ({
                             <Clock className="w-4 h-4 text-gray-500" />
                             <span className="text-gray-500">{level.estimatedTime} min</span>
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <div className={`px-2 py-1 rounded-full text-xs text-white ${getDifficultyColor(level.difficulty)}`}>
                               {getDifficultyText(level.difficulty)}

@@ -163,37 +163,37 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
   };
 
   return (
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 py-2 sm:py-4 overflow-x-auto">
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-slate-800 mb-2 flex items-center justify-center gap-3">
-            <Video className="w-8 h-8 text-blue-600" />
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2 flex items-center justify-center gap-3 truncate">
+            <Video className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
             Práctica de Gestos
           </h2>
-          <p className="text-slate-600">
+          <p className="text-slate-600 break-words">
             Practica los gestos de esta lección siguiendo las instrucciones
           </p>
         </div>
 
         {/* Selector de gestos */}
         {gestures && gestures.length > 1 && (
-          <div className="mb-6">
-            <div className="bg-white rounded-xl shadow-lg p-4 border-2 border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-800 mb-3">Selecciona un Gesto</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="mb-6 sm:mb-8">
+            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-slate-200/50">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-3 truncate">Selecciona un Gesto</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                 {gestures.map((gesture, index) => (
                   <button
                     key={gesture.id}
                     onClick={() => handleGestureSelect(index)}
-                    className={`p-3 rounded-lg text-left transition-all duration-200 border-2 ${
+                    className={`group p-3 sm:p-4 rounded-xl text-left transition-all duration-300 border-2 transform hover:scale-[1.02] ${
                       selectedGestureIndex === index
-                        ? 'border-blue-500 bg-blue-50 text-blue-800'
-                        : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50'
+                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-800 shadow-lg'
+                        : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-md'
                     }`}
                   >
-                    <div className="font-medium">
+                    <div className="font-medium truncate">
                       {gesture.gesture_data?.name || `Gesto ${gesture.id}`}
                     </div>
-                    <div className="text-sm text-slate-500 mt-1">
+                    <div className="text-sm text-slate-500 mt-1 truncate">
                       Toca para practicar
                     </div>
                   </button>
@@ -203,10 +203,10 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-xl p-4 border-2 border-slate-200">
-              <div className="relative aspect-video bg-slate-900 rounded-lg overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl p-4 border border-slate-200/50">
+              <div className="relative aspect-video bg-slate-900 rounded-xl overflow-hidden">
                 <video
                   ref={videoRef}
                   className="absolute inset-0 w-full h-full hidden"
@@ -281,7 +281,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
           </div>
 
           <div className="space-y-4">
-            <div className="bg-white rounded-xl shadow-xl p-6 border-2 border-slate-200">
+            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-slate-200/50">
               <h3 className="text-xl font-bold text-slate-800 mb-4">Controles</h3>
 
               <input
@@ -295,7 +295,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
               
 
               {gestureData && (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
                   <button
                     onClick={toggleActive}
                     disabled={!isLoaded}
@@ -326,7 +326,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
             </div>
 
             {gestureData && (
-              <div className="bg-white rounded-xl shadow-xl p-6 border-2 border-slate-200">
+              <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-slate-200/50">
                 <h3 className="text-xl font-bold text-slate-800 mb-4">
                   Información del Gesto
                 </h3>
@@ -334,7 +334,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                 <div className="space-y-3">
                   <div>
                     <p className="text-sm text-slate-600">Nombre</p>
-                    <p className="font-semibold text-slate-800">
+                    <p className="font-semibold text-slate-800 truncate">
                       {gestureData.name}
                     </p>
                   </div>
@@ -348,7 +348,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
 
                   <div>
                     <p className="text-sm text-slate-600">Tipo</p>
-                    <p className="font-semibold text-slate-800">
+                    <p className="font-semibold text-slate-800 truncate">
                       {gestureData.isSequential ? 'Secuencial' : 'Individual'}
                     </p>
                   </div>
@@ -386,10 +386,12 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
         </div>
 
       {isCompleted && gestureData && (
-        <CompletionMessage
-          gestureName={gestureData.name}
-          onRestart={handleRestart}
-        />
+        <div className="mt-4">
+          <CompletionMessage
+            gestureName={gestureData.name}
+            onRestart={handleRestart}
+          />
+        </div>
       )}
     </div>
   );
