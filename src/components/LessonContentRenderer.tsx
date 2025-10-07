@@ -93,10 +93,10 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
       </div>
 
       {/* Contenido principal */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden min-h-[500px]">
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden in-h-m[500px] w-full">
         {showPractice ? (
           // Componente de práctica de gestos real
-          <div className="p-0">
+          <div>
             <GesturePractice 
               gestures={gestures}
               onComplete={handleCompletePractice}

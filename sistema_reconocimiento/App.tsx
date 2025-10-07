@@ -200,13 +200,7 @@ function App() {
                 className="hidden"
               />
 
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 mb-3"
-              >
-                <Upload className="w-5 h-5" />
-                Cargar Archivo JSON
-              </button>
+              
 
               {gestureData && (
                 <>
@@ -237,7 +231,7 @@ function App() {
                     className="w-full bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                   >
                     <RotateCcw className="w-5 h-5" />
-                    Reiniciar
+                    
                   </button>
                 </>
               )}

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Play, Pause, RotateCcw, Video } from 'lucide-react';
+import { Upload, Play, Pause, RotateCcw, Video, Check } from 'lucide-react';
 import { useMediaPipeHands } from '../../hooks/GestureRecognition/useMediaPipeHands';
 import { ProgressIndicator } from './ProgressIndicator';
 import { MatchIndicator } from './MatchIndicator';
@@ -293,53 +293,36 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                 className="hidden"
               />
 
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 mb-3"
-              >
-                <Upload className="w-5 h-5" />
-                Cargar Archivo JSON
-              </button>
+              
 
               {gestureData && (
-                <>
+                <div className="grid grid-cols-3 gap-4">
                   <button
                     onClick={toggleActive}
                     disabled={!isLoaded}
-                    className={`w-full font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 mb-3 ${
+                    className={`w-full font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
                       isActive
                         ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white'
                         : 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
-                    {isActive ? (
-                      <>
-                        <Pause className="w-5 h-5" />
-                        Pausar
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-5 h-5" />
-                        Iniciar
-                      </>
-                    )}
+                    {isActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
                   </button>
 
                   <button
                     onClick={handleRestart}
-                    className="w-full bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 mb-3"
+                    className="w-full bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                   >
                     <RotateCcw className="w-5 h-5" />
-                    Reiniciar
                   </button>
 
                   <button
                     onClick={handleCompletePractice}
                     className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                   >
-                    ✅ Completar Práctica
+                    <Check className="w-5 h-5" />
                   </button>
-                </>
+                </div>
               )}
             </div>
 
