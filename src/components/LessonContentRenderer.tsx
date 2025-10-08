@@ -49,7 +49,12 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      setShowPractice(true);
+      // Si no hay gestos, completar directamente sin mostrar práctica
+      if (!gestures || gestures.length === 0) {
+        onComplete?.();
+      } else {
+        setShowPractice(true);
+      }
     }
   };
 
@@ -145,29 +150,29 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
           </div>
         )}
 
-        <div className="px-8 py-6 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
-          <div className="flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-8 py-4 sm:py-6 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
             <button
               onClick={goToPreviousStep}
               disabled={currentStep === 0 && !showPractice}
-              className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
+              className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-2xl font-semibold transition-all duration-300 min-w-[100px] sm:min-w-[120px] ${
                 currentStep === 0 && !showPractice
                   ? 'text-slate-400 cursor-not-allowed bg-slate-200'
                   : 'text-slate-700 hover:bg-white hover:shadow-md bg-white/50 border border-slate-200'
               }`}
             >
-              <ChevronLeft className="w-5 h-5" />
-              <span className="hidden sm:inline">Anterior</span>
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base hidden sm:inline">Anterior</span>
             </button>
 
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500">
               {showPractice ? (
-                <span className="flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
-                  <PlayCircle className="w-4 h-4" />
-                  Práctica
+                <span className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                  <PlayCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Práctica</span>
                 </span>
               ) : (
-                <span className="px-4 py-2 bg-white rounded-full border border-slate-200">
+                <span className="px-3 sm:px-4 py-2 bg-white rounded-full border border-slate-200">
                   {currentStep + 1} / {totalSteps}
                 </span>
               )}
@@ -175,12 +180,15 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
 
             <button
               onClick={goToNextStep}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 min-w-[100px] sm:min-w-[120px]"
             >
-              <span>
-                {currentStep === totalSteps - 1 ? 'Practicar' : 'Siguiente'}
+              <span className="text-sm sm:text-base">
+                {currentStep === totalSteps - 1 
+                  ? (!gestures || gestures.length === 0 ? 'Completar' : 'Completar')
+                  : 'Siguiente'
+                }
               </span>
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>

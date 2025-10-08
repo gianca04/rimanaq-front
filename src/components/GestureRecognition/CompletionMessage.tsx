@@ -3,9 +3,10 @@ import { Trophy, PartyPopper, CheckCircle, RotateCcw } from 'lucide-react';
 interface CompletionMessageProps {
   gestureName: string;
   onRestart: () => void;
+  onComplete: () => void;
 }
 
-export function CompletionMessage({ gestureName, onRestart }: CompletionMessageProps) {
+export function CompletionMessage({ gestureName, onRestart, onComplete }: CompletionMessageProps) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl p-8 max-w-md w-full border-2 border-slate-200 animate-scale-in">
