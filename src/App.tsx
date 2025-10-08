@@ -106,7 +106,7 @@ function AuthenticatedApp() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-500 via-teal-400 to-green-400 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center">
         <div className="text-white text-2xl">Cargando cursos...</div>
       </div>
     );
@@ -114,14 +114,14 @@ function AuthenticatedApp() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-500 via-teal-400 to-green-400 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center">
         <div className="text-white text-2xl">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-teal-400 to-green-400">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
       <Header 
         selectedCourse={selectedCourse}
         onBackToCourses={handleBackToCourses}
@@ -185,7 +185,7 @@ function AppWithAuth() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center">
         <div className="text-white text-2xl">🤟 Verificando autenticación...</div>
       </div>
     );

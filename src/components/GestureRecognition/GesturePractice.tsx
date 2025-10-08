@@ -225,6 +225,22 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
         </div>
       )}
 
+      {/* Indicadores fuera del canvas */}
+      {gestureData && isActive && (
+        <div className="mb-6 space-y-4">
+          <ProgressIndicator
+            currentStep={currentFrameIndex + 1}
+            totalSteps={gestureData.frames.length}
+            gestureName={gestureData.name}
+          />
+          <MatchIndicator
+            similarity={similarity}
+            threshold={matchThreshold}
+            isMatch={matchHoldTime > 0}
+          />
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <div className="lg:col-span-2">
           <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
@@ -273,22 +289,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                 </div>
               )}
 
-              <div className="absolute top-4 left-4 right-4 flex flex-col gap-3 z-10">
-                {gestureData && isActive && (
-                  <>
-                    <ProgressIndicator
-                      currentStep={currentFrameIndex + 1}
-                      totalSteps={gestureData.frames.length}
-                      gestureName={gestureData.name}
-                    />
-                    <MatchIndicator
-                      similarity={similarity}
-                      threshold={matchThreshold}
-                      isMatch={matchHoldTime > 0}
-                    />
-                  </>
-                )}
-              </div>
+
 
               {gestureData && isActive && matchHoldTime > 0 && (
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
@@ -435,6 +436,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
           <CompletionMessage
             gestureName={gestureData.name}
             onRestart={handleRestart}
+            onComplete={handleCompletePractice}
           />
         </div>
       )}
