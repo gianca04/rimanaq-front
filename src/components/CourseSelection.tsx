@@ -137,7 +137,7 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
                 
                 {/* Icono para LSP - mostrar solo si no hay imagen o como overlay */}
                 <div className="absolute top-4 right-4 text-4xl">
-                  🤟
+                  
                 </div>
                 
                 {/* Estadísticas de progreso */}
@@ -207,7 +207,7 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
       {/* Mensaje cuando no hay cursos */}
       {courses.length === 0 && !loading && (
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">🤟</div>
+          <div className="text-6xl mb-4"></div>
           <h3 className="text-2xl font-bold text-white mb-2">
             No hay cursos disponibles
           </h3>
