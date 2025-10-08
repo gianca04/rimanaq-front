@@ -161,8 +161,8 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
   };
 
   return (
-    <div className={`w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 ${className}`}>
-      <div className="text-center mb-8 lg:mb-10">
+    <div className={`w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 ${className}`}>
+      <div className="text-center mb-6 sm:mb-8 lg:mb-10">
         <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-3xl mb-5 shadow-xl">
           <Hand className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
         </div>
@@ -241,9 +241,31 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+      {/* Popup de manteniendo posición fuera del canvas */}
+      {gestureData && isActive && matchHoldTime > 0 && (
+        <div className="mb-4 flex justify-center animate-pulse">
+          <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2 sm:py-3 shadow-2xl border border-emerald-200 max-w-sm sm:max-w-md w-full">
+            <div className="flex items-center justify-between gap-2 sm:gap-3">
+              <span className="text-xs sm:text-sm font-semibold text-slate-700 flex-shrink-0">
+                Manteniendo posición...
+              </span>
+              <div className="w-24 sm:w-40 h-2 sm:h-3 bg-slate-200 rounded-full overflow-hidden flex-1">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 transition-all duration-100 rounded-full"
+                  style={{ width: `${(matchHoldTime / HOLD_DURATION) * 100}%` }}
+                />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-emerald-600 min-w-[2rem] sm:min-w-[3rem] text-right">
+                {((matchHoldTime / HOLD_DURATION) * 100).toFixed(0)}%
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         <div className="lg:col-span-2">
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
             <div className="relative aspect-video bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
               <video
                 ref={videoRef}
@@ -254,7 +276,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                 ref={canvasRef}
                 width={640}
                 height={480}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover rounded-2xl sm:rounded-none"
               />
 
               {!isLoaded && (
@@ -291,30 +313,13 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
 
 
 
-              {gestureData && isActive && matchHoldTime > 0 && (
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-                  <div className="bg-white/95 backdrop-blur-md rounded-2xl px-6 py-3 shadow-2xl border border-emerald-200">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-semibold text-slate-700">Manteniendo posición...</span>
-                      <div className="w-40 h-3 bg-slate-200 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600 transition-all duration-100 rounded-full"
-                          style={{ width: `${(matchHoldTime / HOLD_DURATION) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-bold text-emerald-600 min-w-[3rem] text-right">
-                        {((matchHoldTime / HOLD_DURATION) * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
+
             </div>
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-xl p-6 border border-slate-200">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 border border-slate-200">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
                 <Play className="w-5 h-5 text-white" />
@@ -331,33 +336,33 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
             />
 
             {gestureData && (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <button
                   onClick={toggleActive}
                   disabled={!isLoaded}
-                  className={`flex flex-col items-center justify-center gap-2 font-semibold py-4 px-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 ${
+                  className={`flex flex-col items-center justify-center gap-1 sm:gap-2 font-semibold py-3 sm:py-4 px-2 sm:px-3 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 ${
                     isActive
                       ? 'bg-gradient-to-br from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white'
                       : 'bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white'
                   }`}
                 >
-                  {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                  {isActive ? <Pause className="w-5 h-5 sm:w-6 sm:h-6" /> : <Play className="w-5 h-5 sm:w-6 sm:h-6" />}
                   <span className="text-xs">{isActive ? 'Pausar' : 'Iniciar'}</span>
                 </button>
 
                 <button
                   onClick={handleRestart}
-                  className="flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-500 to-slate-700 hover:from-slate-600 hover:to-slate-800 text-white font-semibold py-4 px-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="flex flex-col items-center justify-center gap-1 sm:gap-2 bg-gradient-to-br from-slate-500 to-slate-700 hover:from-slate-600 hover:to-slate-800 text-white font-semibold py-3 sm:py-4 px-2 sm:px-3 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  <RotateCcw className="w-6 h-6" />
+                  <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6" />
                   <span className="text-xs">Reiniciar</span>
                 </button>
 
                 <button
                   onClick={handleCompletePractice}
-                  className="flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-4 px-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="flex flex-col items-center justify-center gap-1 sm:gap-2 bg-gradient-to-br from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-3 sm:py-4 px-2 sm:px-3 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  <Check className="w-6 h-6" />
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6" />
                   <span className="text-xs">Finalizar</span>
                 </button>
               </div>
@@ -365,7 +370,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
           </div>
 
           {gestureData && (
-            <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-xl p-6 border border-slate-200">
+            <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 border border-slate-200">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
                   <Hand className="w-5 h-5 text-white" />
@@ -375,23 +380,23 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                 </h3>
               </div>
 
-              <div className="space-y-4">
-                <div className="p-4 bg-white rounded-xl border border-slate-200">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="p-3 sm:p-4 bg-white rounded-xl border border-slate-200">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Nombre de la Seña</p>
                   <p className="font-bold text-slate-900 text-lg truncate">
                     {gestureData.name}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-4 bg-white rounded-xl border border-slate-200">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div className="p-3 sm:p-4 bg-white rounded-xl border border-slate-200">
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Pasos</p>
                     <p className="font-bold text-slate-900 text-2xl">
                       {gestureData.frames.length}
                     </p>
                   </div>
 
-                  <div className="p-4 bg-white rounded-xl border border-slate-200">
+                  <div className="p-3 sm:p-4 bg-white rounded-xl border border-slate-200">
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tipo</p>
                     <p className="font-bold text-slate-900 text-sm truncate">
                       {gestureData.isSequential ? 'Secuencial' : 'Individual'}
@@ -399,7 +404,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                   </div>
                 </div>
 
-                <div className="p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
+                <div className="p-4 sm:p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-bold text-slate-700">Precisión Requerida</p>
                     <span className="text-2xl font-black text-blue-600">{matchThreshold}%</span>
@@ -419,7 +424,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                   </div>
                 </div>
 
-                <div className="p-4 bg-white rounded-xl border border-slate-200">
+                <div className="p-3 sm:p-4 bg-white rounded-xl border border-slate-200">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tiempo de Espera</p>
                   <p className="font-bold text-slate-900 text-lg">
                     {(HOLD_DURATION / 1000).toFixed(1)} segundos
