@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, PlayCircle } from 'lucide-react';
 import { LessonContentStep, Gesture } from '../types';
 import GesturePractice from './GestureRecognition/GesturePractice';
 
@@ -19,38 +19,36 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [showPractice, setShowPractice] = useState(false);
 
-  // Debug: Log gestures cuando se reciban
   React.useEffect(() => {
     if (gestures && gestures.length > 0) {
       console.log('🤟 Gestures recibidos para práctica:', gestures);
     }
   }, [gestures]);
 
-  // Si no hay contenido, mostrar mensaje
   if (!content || content.length === 0) {
     return (
-      <div className={`text-center py-12 ${className}`}>
-        <div className="text-6xl mb-4">📖</div>
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">
-          Contenido en desarrollo
+      <div className={`text-center py-20 ${className}`}>
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl mb-6">
+          <BookOpen className="w-10 h-10 text-slate-400" />
+        </div>
+        <h3 className="text-3xl font-bold text-slate-800 mb-4">
+          Contenido en Desarrollo
         </h3>
-        <p className="text-gray-600">
+        <p className="text-slate-600 text-lg max-w-md mx-auto leading-relaxed">
           El contenido de esta lección estará disponible próximamente.
+          Estamos trabajando para ofrecerte la mejor experiencia de aprendizaje.
         </p>
       </div>
     );
   }
 
-  // Ordenar pasos por index
   const sortedContent = [...content].sort((a, b) => a.index - b.index);
   const totalSteps = sortedContent.length;
-  
-  // Funciones de navegación
+
   const goToNextStep = () => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Al llegar al final, mostrar práctica
       setShowPractice(true);
     }
   };
@@ -67,106 +65,122 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
     onComplete?.();
   };
 
-  // Renderizar paso actual
   const currentContentStep = sortedContent[currentStep];
+  const progressPercentage = showPractice ? 100 : ((currentStep + 1) / totalSteps) * 100;
 
   return (
-    <div className={`max-w-4xl mx-auto ${className}`}>
-      {/* Indicador de progreso */}
+    <div className={`max-w-6xl mx-auto ${className}`}>
       <div className="mb-8">
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-          <span>
-            {showPractice ? 'Práctica' : `Paso ${currentStep + 1} de ${totalSteps}`}
+        <div className="flex items-center justify-between text-sm font-semibold mb-3">
+          <span className="text-slate-600">
+            {showPractice ? (
+              <span className="flex items-center gap-2">
+                <PlayCircle className="w-4 h-4" />
+                Práctica Interactiva
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4" />
+                Paso {currentStep + 1} de {totalSteps}
+              </span>
+            )}
           </span>
-          <span>
-            {showPractice ? '100%' : `${Math.round(((currentStep + 1) / totalSteps) * 100)}%`}
+          <span className="text-blue-600">
+            {progressPercentage.toFixed(0)}% completado
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-            style={{ 
-              width: showPractice ? '100%' : `${((currentStep + 1) / totalSteps) * 100}%` 
-            }}
+        <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden shadow-inner">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-full transition-all duration-500 ease-out shadow-lg"
+            style={{ width: `${progressPercentage}%` }}
           ></div>
         </div>
       </div>
 
-      {/* Contenido principal */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden in-h-m[500px] w-full">
+      <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
         {showPractice ? (
-          // Componente de práctica de gestos real
           <div>
-            <GesturePractice 
+            <GesturePractice
               gestures={gestures}
               onComplete={handleCompletePractice}
               className="min-h-[600px]"
             />
-            
-            <div className="p-6 bg-gray-50 border-t border-gray-200">
+
+            <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
               <button
                 onClick={() => setShowPractice(false)}
-                className="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+                className="w-full px-6 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-slate-200"
               >
-                ← Revisar contenido de la lección
+                <ChevronLeft className="w-5 h-5" />
+                Revisar contenido de la lección
               </button>
             </div>
           </div>
         ) : (
-          // Contenido del paso actual
-          <div className="p-8">
-            {/* Header del paso */}
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <div className="p-8 lg:p-12">
+            <div className="mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4 border border-blue-200">
+                <BookOpen className="w-4 h-4" />
+                Lección {currentStep + 1}
+              </div>
+              <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-tight">
                 {currentContentStep.titulo}
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg lg:text-xl text-slate-600 leading-relaxed">
                 {currentContentStep.descripcion}
               </p>
             </div>
 
-            {/* Media (imagen o video) */}
-            <div className="mb-6">
+            <div className="mb-8">
               <MediaRenderer media={currentContentStep.media} />
             </div>
 
-            {/* Contenido de texto */}
-            <div className="prose max-w-none mb-8">
-              <p className="text-gray-700 leading-relaxed text-lg">
-                {currentContentStep.contenido}
-              </p>
+            <div className="prose prose-lg max-w-none">
+              <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl border border-slate-200">
+                <p className="text-slate-700 leading-relaxed text-lg m-0">
+                  {currentContentStep.contenido}
+                </p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Controles de navegación */}
-        <div className="px-8 py-4 bg-gray-50 border-t border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className="px-8 py-6 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
+          <div className="flex items-center justify-between gap-4">
             <button
               onClick={goToPreviousStep}
               disabled={currentStep === 0 && !showPractice}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
                 currentStep === 0 && !showPractice
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-gray-700 hover:bg-gray-200'
+                  ? 'text-slate-400 cursor-not-allowed bg-slate-200'
+                  : 'text-slate-700 hover:bg-white hover:shadow-md bg-white/50 border border-slate-200'
               }`}
             >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Anterior</span>
+              <ChevronLeft className="w-5 h-5" />
+              <span className="hidden sm:inline">Anterior</span>
             </button>
 
-            <div className="text-sm text-gray-500">
-              {showPractice ? 'Práctica' : `${currentStep + 1} / ${totalSteps}`}
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+              {showPractice ? (
+                <span className="flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                  <PlayCircle className="w-4 h-4" />
+                  Práctica
+                </span>
+              ) : (
+                <span className="px-4 py-2 bg-white rounded-full border border-slate-200">
+                  {currentStep + 1} / {totalSteps}
+                </span>
+              )}
             </div>
 
             <button
               onClick={goToNextStep}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <span>
                 {currentStep === totalSteps - 1 ? 'Practicar' : 'Siguiente'}
               </span>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -175,25 +189,25 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
   );
 };
 
-// Componente para renderizar media (imagen o video)
 const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ media }) => {
   if (media.tipo === 'image') {
     return (
-      <div className="relative rounded-xl overflow-hidden bg-gray-100">
-        <img 
-          src={media.url} 
+      <div className="relative rounded-2xl overflow-hidden bg-slate-100 shadow-lg border border-slate-200">
+        <img
+          src={media.url}
           alt="Contenido de la lección"
-          className="w-full h-auto max-h-96 object-contain"
+          className="w-full h-auto max-h-[500px] object-contain"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.style.display = 'none';
             const parent = target.parentElement;
             if (parent) {
               parent.innerHTML = `
-                <div class="flex items-center justify-center h-48 text-gray-400">
-                  <div class="text-center">
-                    <div class="text-4xl mb-2">🖼️</div>
-                    <p>Error al cargar la imagen</p>
+                <div class="flex items-center justify-center h-64 text-slate-400">
+                  <div class="text-center p-8">
+                    <div class="text-6xl mb-4">🖼️</div>
+                    <p class="font-semibold text-lg">Error al cargar la imagen</p>
+                    <p class="text-sm mt-2">La imagen no está disponible</p>
                   </div>
                 </div>
               `;
@@ -205,61 +219,46 @@ const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ med
   }
 
   if (media.tipo === 'video') {
-    // Convertir URL de YouTube a formato embed válido
     const getYouTubeEmbedUrl = (url: string) => {
-      // Limpiar la URL de parámetros innecesarios
       const cleanUrl = url.trim();
-      
-      // Patrones para diferentes formatos de YouTube
+
       const patterns = [
-        // YouTube Shorts: https://www.youtube.com/shorts/VIDEO_ID
         /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
-        // YouTube Watch: https://www.youtube.com/watch?v=VIDEO_ID
         /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
-        // YouTube Watch con parámetros: https://www.youtube.com/watch?v=VIDEO_ID&other=params
         /(?:youtube\.com\/watch\?.*v=)([a-zA-Z0-9_-]{11})/,
-        // YouTube corta: https://youtu.be/VIDEO_ID
         /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
-        // YouTube embed ya existente: https://www.youtube.com/embed/VIDEO_ID
         /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
       ];
-      
+
       for (const pattern of patterns) {
         const match = cleanUrl.match(pattern);
         if (match && match[1]) {
-          // Construir URL de embed con parámetros de seguridad
           return `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1&fs=1&cc_load_policy=0&iv_load_policy=3&autohide=1`;
         }
       }
-      
-      // Si no es YouTube, verificar si es otra plataforma de video
+
       if (cleanUrl.includes('vimeo.com')) {
         const vimeoMatch = cleanUrl.match(/vimeo\.com\/(\d+)/);
         if (vimeoMatch) {
           return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
         }
       }
-      
-      // Para URLs directas de video (mp4, webm, etc.)
+
       if (cleanUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i)) {
         return cleanUrl;
       }
-      
-      // Fallback: si no reconoce el formato, devolver la URL original
+
       console.warn('URL de video no reconocida:', cleanUrl);
       return cleanUrl;
     };
 
     const embedUrl = getYouTubeEmbedUrl(media.url);
-
-    // Verificar si es un video directo (mp4, webm, etc.)
     const isDirectVideo = embedUrl.match(/\.(mp4|webm|ogg)(\?.*)?$/i);
-    
+
     return (
-      <div className="relative rounded-xl overflow-hidden bg-gray-900">
+      <div className="relative rounded-2xl overflow-hidden bg-slate-900 shadow-2xl border border-slate-700">
         <div className="aspect-video">
           {isDirectVideo ? (
-            // Renderizar video directo
             <video
               src={embedUrl}
               title="Video de la lección"
@@ -273,10 +272,10 @@ const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ med
                 if (parent) {
                   parent.innerHTML = `
                     <div class="flex items-center justify-center h-full text-white">
-                      <div class="text-center p-6">
-                        <div class="text-4xl mb-4">📹</div>
-                        <p class="font-semibold mb-2">Error al cargar el video</p>
-                        <p class="text-sm text-gray-300">Formato no compatible o URL inválida</p>
+                      <div class="text-center p-8">
+                        <div class="text-6xl mb-4">📹</div>
+                        <p class="font-semibold text-xl mb-2">Error al cargar el video</p>
+                        <p class="text-sm text-slate-300">Formato no compatible o URL inválida</p>
                       </div>
                     </div>
                   `;
@@ -286,7 +285,6 @@ const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ med
               Tu navegador no soporta la reproducción de video.
             </video>
           ) : (
-            // Renderizar iframe para YouTube, Vimeo, etc.
             <iframe
               src={embedUrl}
               title="Video de la lección"
@@ -301,12 +299,12 @@ const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ med
                 if (parent) {
                   parent.innerHTML = `
                     <div class="flex items-center justify-center h-full text-white">
-                      <div class="text-center p-6">
-                        <div class="text-4xl mb-4">🚫</div>
-                        <p class="font-semibold mb-2">Video no disponible</p>
-                        <p class="text-sm text-gray-300">El video no se puede mostrar debido a restricciones</p>
-                        <a href="${media.url}" target="_blank" rel="noopener noreferrer" 
-                           class="inline-block mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm">
+                      <div class="text-center p-8">
+                        <div class="text-6xl mb-4">🚫</div>
+                        <p class="font-semibold text-xl mb-2">Video no disponible</p>
+                        <p class="text-sm text-slate-300 mb-4">El video no se puede mostrar debido a restricciones</p>
+                        <a href="${media.url}" target="_blank" rel="noopener noreferrer"
+                           class="inline-block px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 font-semibold text-sm transition-colors">
                           Abrir en nueva ventana
                         </a>
                       </div>
@@ -317,23 +315,19 @@ const MediaRenderer: React.FC<{ media: { tipo: string; url: string } }> = ({ med
             />
           )}
         </div>
-        
-
       </div>
     );
   }
 
-  // Fallback para tipos no reconocidos
   return (
-    <div className="flex items-center justify-center h-48 bg-gray-100 rounded-xl text-gray-400">
-      <div className="text-center">
-        <div className="text-4xl mb-2">❓</div>
-        <p>Tipo de media no soportado: {media.tipo}</p>
+    <div className="flex items-center justify-center h-64 bg-slate-100 rounded-2xl text-slate-400 border border-slate-200">
+      <div className="text-center p-8">
+        <div className="text-6xl mb-4">❓</div>
+        <p className="font-semibold text-lg">Tipo de media no soportado</p>
+        <p className="text-sm mt-2">Tipo: {media.tipo}</p>
       </div>
     </div>
   );
 };
-
-
 
 export default LessonContentRenderer;

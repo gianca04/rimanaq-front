@@ -1,4 +1,5 @@
-import { getSimilarityBgColor } from '../../utils/GestureRecognition/gestureComparison';
+import React from 'react';
+import { Check, Target } from 'lucide-react';
 
 interface MatchIndicatorProps {
   similarity: number;
@@ -6,46 +7,37 @@ interface MatchIndicatorProps {
   isMatch: boolean;
 }
 
-export function MatchIndicator({ similarity, threshold, isMatch }: MatchIndicatorProps) {
-  const bgColorClass = getSimilarityBgColor(similarity);
-
+export const MatchIndicator: React.FC<MatchIndicatorProps> = ({
+  similarity,
+  threshold,
+  isMatch
+}) => {
   return (
-    <div className="bg-slate-900/20 backdrop-blur-sm rounded-lg p-2.5 border border-white/10">
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-medium text-white/80">Precisión</span>
-        <span className="text-sm font-bold text-white">
-          {similarity.toFixed(1)}%
-        </span>
-      </div>
-
-      <div className="relative">
-        <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
-          <div
-            className={`${bgColorClass} h-full rounded-full transition-all duration-300 ease-out`}
-            style={{ width: `${Math.min(similarity, 100)}%` }}
-          />
+    <div className={`bg-white/95 backdrop-blur-md rounded-2xl px-5 py-3 shadow-xl border-2 transition-all duration-300 ${
+      isMatch ? 'border-emerald-400 bg-emerald-50/80' : 'border-slate-200'
+    }`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {isMatch ? (
+            <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse">
+              <Check className="w-5 h-5 text-white" />
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
+              <Target className="w-5 h-5 text-slate-600" />
+            </div>
+          )}
+          <span className="text-sm font-semibold text-slate-700">Precisión</span>
         </div>
-
-        <div
-          className="absolute top-1/2 -translate-y-1/2 w-0.5 h-3 bg-white/60 rounded-full"
-          style={{ left: `${threshold}%` }}
-        >
-          <div
-            className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-white/70"
-            style={{ top: '-16px' }}
-          >
-            {threshold}%
+        <div className="text-right">
+          <div className={`text-2xl font-bold ${
+            isMatch ? 'text-emerald-600' : similarity >= threshold - 10 ? 'text-amber-600' : 'text-slate-700'
+          }`}>
+            {similarity.toFixed(0)}%
           </div>
+          <div className="text-xs text-slate-500">Meta: {threshold}%</div>
         </div>
       </div>
-
-      {isMatch && (
-        <div className="mt-1.5 text-center">
-          <span className="inline-block px-2 py-0.5 bg-green-400/20 text-green-300 text-[10px] font-semibold rounded-full border border-green-400/30 animate-pulse">
-            ¡Correcto!
-          </span>
-        </div>
-      )}
     </div>
   );
-}
+};
