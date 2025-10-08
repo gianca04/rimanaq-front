@@ -36,13 +36,23 @@ export function CompletionMessage({ gestureName, onRestart, onComplete }: Comple
             <span className="font-semibold">Aprendizaje completado</span>
           </div>
 
-          <button
-            onClick={onRestart}
-            className="w-full bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-          >
-            <RotateCcw className="w-5 h-5" />
-            Practicar de Nuevo
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={onComplete}
+              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+            >
+              <CheckCircle className="w-5 h-5" />
+              Continuar
+            </button>
+            
+            <button
+              onClick={onRestart}
+              className="flex-1 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+            >
+              <RotateCcw className="w-5 h-5" />
+              Practicar de Nuevo
+            </button>
+          </div>
 
           <p className="text-xs text-slate-500 mt-4">
             Continúa practicando para mejorar tu precisión
