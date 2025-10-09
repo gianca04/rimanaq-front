@@ -58,10 +58,10 @@ const Header: React.FC<HeaderProps> = ({
                     <span className="font-semibold text-white">{completedLevels}/{totalLevels}</span>
                   </div>
                   <div className="w-32 bg-white/20 rounded-full h-2.5 shadow-inner">
-                    <div
-                      className="h-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full transition-all duration-500"
-                      style={{ width: `${totalLevels > 0 ? (completedLevels / totalLevels) * 100 : 0}%` }}
-                    ></div>
+                      <div
+                        className="h-2 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full transition-all duration-500 min-w-[32px] sm:h-2.5"
+                        style={{ width: `${totalLevels > 0 ? (completedLevels / totalLevels) * 100 : 0}%` }}
+                      ></div>
                   </div>
                 </div>
               </>
