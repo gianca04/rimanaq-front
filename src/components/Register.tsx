@@ -95,7 +95,7 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              📧 Email
+              Email
             </label>
             <input
               type="email"
@@ -112,7 +112,7 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
           {/* Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              🔒 Contraseña
+              Contraseña
             </label>
             <input
               type="password"
@@ -129,7 +129,7 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
           {/* Password Confirmation */}
           <div>
             <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-2">
-              🔒 Confirmar contraseña
+              Confirmar contraseña
             </label>
             <input
               type="password"
@@ -171,15 +171,7 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
         </div>
 
         {/* Info */}
-        <div className="mt-6 p-4 bg-gray-100 rounded-md">
-          <h3 className="font-semibold text-gray-700 mb-2">📝 Registro:</h3>
-          <p className="text-sm text-gray-600">
-            Crea tu cuenta para acceder a los cursos de Lengua de Señas Peruana.
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            Tu cuenta se crea automáticamente y podrás hacer login de inmediato.
-          </p>
-        </div>
+        
       </div>
     </div>
   );
