@@ -12,16 +12,16 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   gestureName
 }) => {
   return (
-    <div className="bg-white/95 backdrop-blur-md rounded-2xl px-5 py-3 shadow-xl border border-blue-100">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-bold text-slate-800">{gestureName}</span>
-        <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-          {currentStep} / {totalSteps}
+    <div className="bg-white rounded-2xl px-6 py-4 border-2 border-b-8 border-duo-gray">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-base font-black text-duo-text uppercase tracking-tight">{gestureName}</span>
+        <span className="text-xs font-black text-duo-blue bg-duo-blue/10 px-4 py-1.5 rounded-xl border border-duo-blue/20 uppercase">
+          Pasos: {currentStep} / {totalSteps}
         </span>
       </div>
-      <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+      <div className="w-full h-4 bg-duo-gray rounded-full overflow-hidden border-2 border-duo-gray">
         <div
-          className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-500 transition-all duration-500 ease-out rounded-full"
+          className="h-full bg-duo-blue transition-all duration-700 ease-out rounded-full"
           style={{ width: `${(currentStep / totalSteps) * 100}%` }}
         />
       </div>

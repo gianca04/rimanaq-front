@@ -13,29 +13,29 @@ export const MatchIndicator: React.FC<MatchIndicatorProps> = ({
   isMatch
 }) => {
   return (
-    <div className={`bg-white/95 backdrop-blur-md rounded-2xl px-5 py-3 shadow-xl border-2 transition-all duration-300 ${
-      isMatch ? 'border-emerald-400 bg-emerald-50/80' : 'border-slate-200'
+    <div className={`bg-white rounded-2xl px-6 py-4 border-2 border-b-8 transition-all duration-300 ${
+      isMatch ? 'border-duo-green' : 'border-duo-gray'
     }`}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {isMatch ? (
-            <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse">
-              <Check className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-duo-green flex items-center justify-center border-b-2 border-duo-green-dark">
+              <Check className="w-6 h-6 text-white" strokeWidth={4} />
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
-              <Target className="w-5 h-5 text-slate-600" />
+            <div className="w-10 h-10 rounded-xl bg-duo-background-soft flex items-center justify-center border-b-2 border-duo-gray">
+              <Target className="w-6 h-6 text-duo-gray-dark" />
             </div>
           )}
-          <span className="text-sm font-semibold text-slate-700">Precisión</span>
+          <span className="text-sm font-black text-duo-text uppercase tracking-tight">Precisión</span>
         </div>
         <div className="text-right">
-          <div className={`text-2xl font-bold ${
-            isMatch ? 'text-emerald-600' : similarity >= threshold - 10 ? 'text-amber-600' : 'text-slate-700'
+          <div className={`text-3xl font-black leading-none ${
+            isMatch ? 'text-duo-green' : similarity >= threshold - 10 ? 'text-duo-yellow-dark' : 'text-duo-text'
           }`}>
             {similarity.toFixed(0)}%
           </div>
-          <div className="text-xs text-slate-500">Meta: {threshold}%</div>
+          <div className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest mt-1">META: {threshold}%</div>
         </div>
       </div>
     </div>
