@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Star, Lock, CheckCircle, Trophy, Sparkles } from 'lucide-react';
+import { Clock, Star, Lock, CheckCircle, Trophy, Sparkles, Check } from 'lucide-react';
 import { CourseWithLevels, Level, UserProgress } from '../types';
 
 interface LevelMapProps {
@@ -21,10 +21,10 @@ const LevelMap: React.FC<LevelMapProps> = ({
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-emerald-100 text-emerald-700 border-emerald-300';
-      case 'medium': return 'bg-amber-100 text-amber-700 border-amber-300';
-      case 'hard': return 'bg-rose-100 text-rose-700 border-rose-300';
-      default: return 'bg-slate-100 text-slate-700 border-slate-300';
+      case 'easy': return 'bg-white text-duo-green border-duo-green';
+      case 'medium': return 'bg-white text-duo-yellow-dark border-duo-yellow-dark';
+      case 'hard': return 'bg-white text-duo-red border-duo-red';
+      default: return 'bg-white text-duo-gray-dark border-duo-gray';
     }
   };
 
@@ -54,36 +54,37 @@ const LevelMap: React.FC<LevelMapProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-duo-background-soft py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-6xl mx-auto">
         <div className="text-center mb-16 space-y-4 animate-fade-in">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-lg">
-            <Trophy className="w-5 h-5 text-amber-300" />
-            <span className="text-sm font-semibold text-white tracking-wide">Tu Aventura de Aprendizaje</span>
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full border-b-4 border-duo-gray shadow-sm">
+            <Trophy className="w-5 h-5 text-duo-yellow" />
+            <span className="text-sm font-black text-duo-text uppercase tracking-wide">Tu Aventura de Aprendizaje</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-duo-text mb-4 tracking-tight italic">
             Mapa de Aventuras
           </h2>
-          <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto font-medium">
+          <p className="text-lg sm:text-xl text-duo-gray-dark max-w-2xl mx-auto font-bold">
             Completa cada nivel para desbloquear el siguiente desafío
           </p>
         </div>
 
         <div className="relative">
-          <svg className="absolute left-1/2 top-0 bottom-0 w-2 -translate-x-1/2 hidden lg:block" style={{ height: '100%' }}>
+          <svg className="absolute left-1/2 top-0 bottom-0 w-8 -translate-x-1/2 z-0" style={{ height: '100%' }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style={{ stopColor: '#a78bfa', stopOpacity: 1 }} />
-                <stop offset="50%" style={{ stopColor: '#c084fc', stopOpacity: 1 }} />
-                <stop offset="100%" style={{ stopColor: '#e879f9', stopOpacity: 1 }} />
+                <stop offset="0%" style={{ stopColor: '#1CB0F6', stopOpacity: 1 }} />
+                <stop offset="50%" style={{ stopColor: '#58CC02', stopOpacity: 1 }} />
+                <stop offset="100%" style={{ stopColor: '#1CB0F6', stopOpacity: 1 }} />
               </linearGradient>
             </defs>
             <path
-              d={`M 4 0 Q 4 50, ${Math.sin(0) * 20 + 4} 100 T 4 200 T 4 300 T 4 400 T 4 500 T 4 600 T 4 700 T 4 800 T 4 900 T 4 1000 L 4 10000`}
+              d={`M 16 0 Q 16 50, ${Math.sin(0) * 40 + 16} 100 T 16 200 T 16 300 T 16 400 T 16 500 T 16 600 T 16 700 T 16 800 T 16 900 T 16 1000 L 16 10000`}
               stroke="url(#pathGradient)"
-              strokeWidth="4"
+              strokeWidth="12"
               fill="none"
-              className="drop-shadow-lg"
+              strokeLinecap="round"
+              className="drop-shadow-md opacity-40"
             />
           </svg>
 
@@ -100,18 +101,18 @@ const LevelMap: React.FC<LevelMapProps> = ({
                     <div className={`w-full lg:w-5/12 ${isEven ? 'lg:pr-12' : 'lg:pl-12'}`}>
                       <div
                         className={`
-                          relative bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-500
+                          relative bg-white rounded-3xl border-b-8 border-duo-gray transition-all duration-200 overflow-hidden
                           ${isUnlocked
-                            ? 'hover:scale-[1.03] hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)] cursor-pointer hover:-translate-y-2'
+                            ? 'hover:scale-[1.02] cursor-pointer hover:border-duo-blue'
                             : 'opacity-70 cursor-not-allowed grayscale'
                           }
-                          ${isCompleted ? 'ring-4 ring-emerald-400 ring-offset-4 ring-offset-transparent' : ''}
+                          ${isCompleted ? 'border-duo-green' : isUnlocked ? 'border-duo-blue' : 'border-duo-gray'}
                         `}
                         onClick={() => isUnlocked && onSelectLevel(level)}
                       >
-                        <div className={`h-2 bg-gradient-to-r ${course.color} relative overflow-hidden`}>
+                        <div className={`h-2 ${isCompleted ? 'bg-duo-green' : isUnlocked ? 'bg-duo-blue' : 'bg-duo-gray'} relative overflow-hidden`}>
                           {isUnlocked && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
                           )}
                         </div>
 
@@ -120,17 +121,17 @@ const LevelMap: React.FC<LevelMapProps> = ({
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
                                 <span className={`
-                                  inline-flex items-center justify-center w-10 h-10 rounded-xl font-bold text-lg
+                                  inline-flex items-center justify-center w-10 h-10 rounded-xl font-black text-lg
                                   ${isCompleted
-                                    ? 'bg-emerald-100 text-emerald-600'
+                                    ? 'bg-duo-green text-white'
                                     : isUnlocked
-                                      ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg'
-                                      : 'bg-gray-200 text-gray-500'
+                                      ? 'bg-duo-blue text-white shadow-lg'
+                                      : 'bg-duo-gray text-duo-gray-dark'
                                   }
                                 `}>
                                   {index + 1}
                                 </span>
-                                <h3 className="text-2xl font-bold text-gray-900 leading-tight">
+                                <h3 className="text-2xl font-black text-duo-text leading-tight uppercase tracking-tight">
                                   {level.title}
                                 </h3>
                               </div>
@@ -142,10 +143,10 @@ const LevelMap: React.FC<LevelMapProps> = ({
                                 </div>
                               </div>
                             )}
-                            {isCompleted && (
+                             {isCompleted && (
                               <div className="flex-shrink-0 ml-3">
-                                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center animate-bounce-slow">
-                                  <CheckCircle className="w-7 h-7 text-emerald-500" />
+                                <div className="w-12 h-12 rounded-full bg-duo-green flex items-center justify-center animate-bounce-slow border-b-4 border-duo-green-dark">
+                                  <Check className="w-7 h-7 text-white" strokeWidth={4} />
                                 </div>
                               </div>
                             )}
@@ -155,13 +156,13 @@ const LevelMap: React.FC<LevelMapProps> = ({
                             {level.description}
                           </p>
 
-                          <div className="flex items-center justify-between gap-4 flex-wrap">
-                            <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl">
-                              <Clock className="w-5 h-5 text-gray-500" />
-                              <span className="text-sm font-semibold text-gray-700">{level.estimatedTime} min</span>
+                           <div className="flex items-center justify-between gap-4 flex-wrap">
+                            <div className="flex items-center gap-2 px-4 py-2 bg-duo-background-soft rounded-xl border-b-2 border-duo-gray">
+                              <Clock className="w-5 h-5 text-duo-gray-dark" />
+                              <span className="text-sm font-black text-duo-text tracking-wide">{level.estimatedTime} MIN</span>
                             </div>
 
-                            <div className={`px-4 py-2 rounded-xl text-sm font-bold border-2 ${getDifficultyColor(level.difficulty)}`}>
+                            <div className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border-b-4 ${getDifficultyColor(level.difficulty)}`}>
                               {getDifficultyText(level.difficulty)}
                             </div>
                           </div>
@@ -189,17 +190,17 @@ const LevelMap: React.FC<LevelMapProps> = ({
                       </div>
                     </div>
 
-                    <div className="hidden lg:flex items-center justify-center w-2/12 z-10">
+                     <div className="hidden lg:flex items-center justify-center w-2/12 z-10">
                       <div className={`
-                        w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black shadow-2xl transform transition-all duration-500
+                        w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black shadow-lg transform transition-all duration-500 border-b-8
                         ${isCompleted
-                          ? 'bg-gradient-to-br from-emerald-400 to-emerald-600 text-white rotate-12 group-hover:rotate-0 group-hover:scale-110'
+                          ? 'bg-duo-green border-duo-green-dark text-white rotate-12 group-hover:rotate-0 group-hover:scale-110'
                           : isUnlocked
-                            ? `bg-gradient-to-br ${course.color} text-white group-hover:rotate-12 group-hover:scale-110`
-                            : 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-600'
+                            ? 'bg-duo-blue border-duo-blue-dark text-white group-hover:rotate-12 group-hover:scale-110 shadow-duo-blue/30'
+                            : 'bg-duo-gray border-duo-gray-dark text-duo-gray-dark'
                         }
                       `}>
-                        {isCompleted ? '✓' : index + 1}
+                        {isCompleted ? <Check className="w-10 h-10" strokeWidth={4} /> : index + 1}
                       </div>
                     </div>
 
@@ -211,10 +212,10 @@ const LevelMap: React.FC<LevelMapProps> = ({
           </div>
         </div>
 
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-            <Sparkles className="w-5 h-5 text-amber-300" />
-            <span className="text-sm font-medium text-white">¡Sigue avanzando en tu camino!</span>
+         <div className="mt-16 text-center">
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-2xl border-b-4 border-duo-gray shadow-sm">
+            <Sparkles className="w-5 h-5 text-duo-yellow" />
+            <span className="text-sm font-black text-duo-text uppercase tracking-wide">¡Sigue avanzando en tu camino!</span>
           </div>
         </div>
       </div>
