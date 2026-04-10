@@ -70,22 +70,14 @@ const LevelMap: React.FC<LevelMapProps> = ({
         </div>
 
         <div className="relative">
-          <svg className="absolute left-1/2 top-0 bottom-0 w-2 -translate-x-1/2 hidden lg:block" style={{ height: '100%' }}>
-            <defs>
-              <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style={{ stopColor: '#1CB0F6', stopOpacity: 1 }} />
-                <stop offset="50%" style={{ stopColor: '#58CC02', stopOpacity: 1 }} />
-                <stop offset="100%" style={{ stopColor: '#1CB0F6', stopOpacity: 1 }} />
-              </linearGradient>
-            </defs>
-            <path
-              d={`M 4 0 Q 4 50, ${Math.sin(0) * 20 + 4} 100 T 4 200 T 4 300 T 4 400 T 4 500 T 4 600 T 4 700 T 4 800 T 4 900 T 4 1000 L 4 10000`}
-              stroke="url(#pathGradient)"
-              strokeWidth="4"
-              fill="none"
-              className="drop-shadow-lg"
-            />
-          </svg>
+          {/* Vertical Path - Acts as the connecting "road" */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-3 lg:w-4 -translate-x-1/2 z-0 hidden lg:block">
+            <div className="h-full w-full bg-duo-gray rounded-full opacity-30 shadow-inner" />
+          </div>
+          
+          <div className="absolute left-1/2 top-0 bottom-0 w-3 lg:w-4 -translate-x-1/2 z-0 block lg:hidden" style={{ height: 'calc(100% - 100px)' }}>
+            <div className="h-full w-full bg-duo-gray rounded-full opacity-30" />
+          </div>
 
           <div className="space-y-12 lg:space-y-20">
             {course.levels.map((level, index) => {
@@ -102,18 +94,14 @@ const LevelMap: React.FC<LevelMapProps> = ({
                         className={`
                           relative bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-300 border-b-8
                           ${isUnlocked
-                            ? 'hover:scale-[1.03] hover:shadow-2xl cursor-pointer hover:-translate-y-2 border-duo-gray hover:border-duo-blue-dark'
+                            ? 'hover:scale-[1.02] hover:shadow-2xl cursor-pointer border-duo-gray hover:border-duo-blue-dark'
                             : 'opacity-70 cursor-not-allowed grayscale border-duo-gray'
                           }
                           ${isCompleted ? 'border-duo-green-dark' : isUnlocked ? 'border-duo-blue-dark' : ''}
                         `}
                         onClick={() => isUnlocked && onSelectLevel(level)}
                       >
-                        <div className={`h-2 bg-duo-gray relative overflow-hidden`}>
-                          {isUnlocked && (
-                            <div className={`absolute inset-0 bg-duo-blue/20 animate-shimmer`}></div>
-                          )}
-                        </div>
+                        <div className={`h-2 bg-duo-gray relative overflow-hidden`} />
 
                         <div className="p-8">
                           <div className="flex items-start justify-between mb-4">
@@ -144,7 +132,7 @@ const LevelMap: React.FC<LevelMapProps> = ({
                             )}
                             {isCompleted && (
                               <div className="flex-shrink-0 ml-3">
-                                <div className="w-12 h-12 rounded-full bg-duo-green/10 flex items-center justify-center animate-bounce-slow">
+                                <div className="w-12 h-12 rounded-full bg-duo-green/10 flex items-center justify-center">
                                   <CheckCircle className="w-7 h-7 text-duo-green" />
                                 </div>
                               </div>
@@ -189,13 +177,13 @@ const LevelMap: React.FC<LevelMapProps> = ({
                       </div>
                     </div>
 
-                    <div className="hidden lg:flex items-center justify-center w-2/12 z-10">
+                    <div className="flex items-center justify-center w-full lg:w-2/12 z-10 my-4 lg:my-0">
                       <div className={`
-                        w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black shadow-xl transform transition-all duration-300 border-b-4
+                        w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center text-2xl lg:text-3xl font-black shadow-xl transform transition-all duration-300 border-b-4
                         ${isCompleted
-                          ? 'bg-duo-green border-duo-green-dark text-white rotate-12 group-hover:rotate-0 group-hover:scale-110'
+                          ? 'bg-duo-green border-duo-green-dark text-white lg:rotate-12 group-hover:rotate-0 group-hover:scale-110'
                           : isUnlocked
-                            ? `bg-duo-blue border-duo-blue-dark text-white group-hover:rotate-12 group-hover:scale-110`
+                            ? `bg-duo-blue border-duo-blue-dark text-white group-hover:lg:rotate-12 group-hover:scale-110`
                             : 'bg-duo-gray border-duo-gray-dark text-duo-gray-dark'
                         }
                       `}>
@@ -212,7 +200,7 @@ const LevelMap: React.FC<LevelMapProps> = ({
         </div>
 
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-3 px-8 py-4 bg-white rounded-2xl border-b-4 border-duo-gray shadow-md animate-bounce-slow">
+          <div className="inline-flex items-center gap-3 px-8 py-4 bg-white rounded-2xl border-b-4 border-duo-gray shadow-md">
             <Sparkles className="w-6 h-6 text-duo-yellow" />
             <span className="text-lg font-black text-duo-text uppercase tracking-wide">¡Sigue avanzando en tu camino!</span>
           </div>
@@ -220,26 +208,12 @@ const LevelMap: React.FC<LevelMapProps> = ({
       </div>
 
       <style>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(-20px); }
           to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in {
           animation: fade-in 0.8s ease-out;
-        }
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 2s infinite;
         }
       `}</style>
     </div>
