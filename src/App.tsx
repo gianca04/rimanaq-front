@@ -107,17 +107,16 @@ function AuthenticatedApp() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-10 text-center transform animate-in zoom-in-95 duration-300">
+      <div className="fixed inset-0 bg-duo-background flex items-center justify-center z-50 p-4">
+        <div className="max-w-md w-full p-10 text-center">
           <div className="relative inline-flex mb-6">
-            <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-40 animate-pulse"></div>
-            <Loader className="w-14 h-14 animate-spin text-blue-600 relative" strokeWidth={2.5} />
+            <Loader className="w-16 h-16 animate-spin text-duo-blue" strokeWidth={3} />
           </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-3">
-            Cargando cursos
+          <h3 className="text-3xl font-black text-duo-text mb-3">
+            Rimanaq
           </h3>
-          <p className="text-slate-500 text-sm">
-            Preparando el contenido...
+          <p className="text-duo-gray-dark font-bold text-lg">
+            Preparando tu lección...
           </p>
         </div>
       </div>
@@ -143,20 +142,20 @@ function AuthenticatedApp() {
     };
 
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-10 text-center transform animate-in zoom-in-95 duration-300">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <X className="w-10 h-10 text-red-600" strokeWidth={2.5} />
+      <div className="fixed inset-0 bg-duo-background flex items-center justify-center z-50 p-4">
+        <div className="card-duo max-w-md w-full p-10 text-center">
+          <div className="w-20 h-20 bg-duo-red/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <X className="w-12 h-12 text-duo-red" strokeWidth={3} />
           </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-3">
-            Error al cargar
+          <h3 className="text-2xl font-black text-duo-text mb-3 uppercase">
+            ¡Upps!
           </h3>
-          <p className="text-slate-600 mb-8 text-sm leading-relaxed">{error}</p>
+          <p className="text-duo-text mb-8 font-bold leading-relaxed">{error}</p>
           <button
             onClick={handleRetry}
-            className="w-full px-6 py-3.5 bg-slate-100 text-slate-700 rounded-xl font-semibold hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            className="btn-duo-blue w-full"
           >
-            Reintentar
+            Intentar de nuevo
           </button>
         </div>
       </div>
@@ -164,7 +163,7 @@ function AuthenticatedApp() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
+    <div className="min-h-screen bg-duo-background-soft">
       <Header 
         selectedCourse={selectedCourse}
         onBackToCourses={handleBackToCourses}
@@ -228,18 +227,14 @@ function AppWithAuth() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-10 text-center transform animate-in zoom-in-95 duration-300">
+      <div className="fixed inset-0 bg-duo-background flex items-center justify-center z-50 p-4">
+        <div className="max-w-md w-full p-10 text-center">
           <div className="relative inline-flex mb-6">
-            <div className="absolute inset-0 bg-purple-400 rounded-full blur-xl opacity-40 animate-pulse"></div>
-            <div className="text-5xl relative animate-bounce">🤟</div>
+            <div className="text-6xl relative animate-bounce">🤟</div>
           </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-3">
-            Verificando autenticación
+          <h3 className="text-2xl font-black text-duo-text mb-3">
+            VERIFICANDO...
           </h3>
-          <p className="text-slate-500 text-sm">
-            Validando credenciales...
-          </p>
         </div>
       </div>
     );

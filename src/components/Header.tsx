@@ -27,62 +27,62 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="bg-black/20 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50 shadow-lg">
+    <header className="bg-white border-b-2 border-duo-gray sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {selectedCourse && (
               <button
                 onClick={onBackToCourses}
-                className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-white/10"
+                className="flex items-center space-x-2 text-duo-gray-dark hover:text-duo-text transition-colors duration-200 px-3 py-2 rounded-xl"
               >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="font-medium hidden sm:inline">Cursos</span>
+                <ArrowLeft className="w-5 h-5" strokeWidth={3} />
+                <span className="font-black uppercase text-sm hidden sm:inline">Cursos</span>
               </button>
             )}
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-              {selectedCourse ? selectedCourse.title : 'Rimanaq'}
+            <h1 className="text-2xl font-black text-duo-blue">
+              {selectedCourse ? selectedCourse.title : 'RIMANAQ'}
             </h1>
           </div>
 
           <div className="flex items-center space-x-4">
             {selectedCourse && (
               <>
-                <div className="hidden md:flex items-center space-x-4">
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                    <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                    <span className="font-semibold text-white">{totalStars}</span>
+                <div className="hidden md:flex items-center space-x-6">
+                  <div className="flex items-center space-x-2">
+                    <Star className="w-6 h-6 text-duo-yellow fill-duo-yellow" strokeWidth={3} />
+                    <span className="font-black text-duo-yellow text-lg">{totalStars}</span>
                   </div>
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                    <Trophy className="w-4 h-4 text-emerald-400" />
-                    <span className="font-semibold text-white">{completedLevels}/{totalLevels}</span>
+                  <div className="flex items-center space-x-2">
+                    <Trophy className="w-6 h-6 text-duo-green" strokeWidth={3} />
+                    <span className="font-black text-duo-green text-lg">{completedLevels}/{totalLevels}</span>
                   </div>
-                  <div className="w-32 bg-white/20 rounded-full h-2.5 shadow-inner">
-                      <div
-                        className="h-2 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full transition-all duration-500 min-w-[32px] sm:h-2.5"
-                        style={{ width: `${totalLevels > 0 ? (completedLevels / totalLevels) * 100 : 0}%` }}
-                      ></div>
+                  <div className="w-40 bg-duo-gray rounded-full h-4 overflow-hidden">
+                    <div
+                      className="h-full bg-duo-green rounded-full transition-all duration-500"
+                      style={{ width: `${totalLevels > 0 ? (completedLevels / totalLevels) * 100 : 0}%` }}
+                    ></div>
                   </div>
                 </div>
               </>
             )}
 
-            <div className="flex items-center space-x-2 border-l border-white/20 pl-4">
+            <div className="flex items-center space-x-2 border-l-2 border-duo-gray pl-4">
               <button
                 onClick={onGoToProfile}
-                className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-white/10"
+                className="flex items-center space-x-2 text-duo-gray-dark hover:text-duo-blue transition-colors duration-200 px-3 py-2"
                 title="Ver perfil"
               >
-                <User className="w-4 h-4" />
-                <span className="text-sm font-medium hidden lg:inline">{user?.name || user?.email}</span>
+                <User className="w-5 h-5" strokeWidth={3} />
+                <span className="text-sm font-black uppercase hidden lg:inline">{user?.name || user?.email}</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-1 text-white/70 hover:text-rose-300 transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-rose-500/20"
+                className="flex items-center space-x-1 text-duo-gray-dark hover:text-duo-red transition-colors duration-200 px-3 py-2"
                 title="Cerrar sesión"
               >
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm font-medium hidden sm:inline">Salir</span>
+                <LogOut className="w-5 h-5" strokeWidth={3} />
+                <span className="text-sm font-black uppercase hidden sm:inline">Salir</span>
               </button>
             </div>
           </div>

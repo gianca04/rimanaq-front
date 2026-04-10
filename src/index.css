@@ -1,3 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-din text-duo-text bg-duo-background-soft selection:bg-duo-blue selection:text-white;
+  }
+}
+
+@layer components {
+  /* Botones estilo Duolingo con efecto 3D */
+  .btn-duo {
+    @apply relative inline-flex items-center justify-center px-6 py-3 font-bold uppercase tracking-wider transition-all duration-100 rounded-xl border-b-4 active:border-b-0 active:translate-y-[2px];
+  }
+
+  .btn-duo-green {
+    @apply btn-duo bg-duo-green text-white border-duo-green-dark hover:bg-[#61E002];
+  }
+
+  .btn-duo-blue {
+    @apply btn-duo bg-duo-blue text-white border-duo-blue-dark hover:bg-[#23C4FF];
+  }
+
+  .btn-duo-white {
+    @apply btn-duo bg-white text-duo-text border-duo-gray hover:bg-duo-gray;
+  }
+
+  /* Tarjetas */
+  .card-duo {
+    @apply bg-white border-2 border-duo-gray rounded-2xl p-6 transition-all;
+  }
+
+  .card-duo-interactive {
+    @apply card-duo hover:border-duo-blue cursor-pointer active:translate-y-1;
+  }
+
+  /* Inputs */
+  .input-duo {
+    @apply w-full px-4 py-3 bg-duo-background-soft border-2 border-duo-gray rounded-xl outline-none focus:border-duo-blue transition-colors text-duo-text placeholder:text-duo-gray-dark;
+  }
+}

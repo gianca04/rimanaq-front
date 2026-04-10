@@ -74,124 +74,82 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
   const progressPercentage = showPractice ? 100 : ((currentStep + 1) / totalSteps) * 100;
 
   return (
-    <div className={`max-w-6xl mx-auto ${className}`}>
-      <div className="mb-8">
-        <div className="flex items-center justify-between text-sm font-semibold mb-3">
-          <span className="text-slate-600">
-            {showPractice ? (
-              <span className="flex items-center gap-2">
-                <PlayCircle className="w-4 h-4" />
-                Práctica Interactiva
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4" />
-                Paso {currentStep + 1} de {totalSteps}
-              </span>
-            )}
-          </span>
-          <span className="text-blue-600">
-            {progressPercentage.toFixed(0)}% completado
-          </span>
-        </div>
-        <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden shadow-inner">
-          <div
-            className="h-full bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-full transition-all duration-500 ease-out shadow-lg"
-            style={{ width: `${progressPercentage}%` }}
-          ></div>
-        </div>
-      </div>
+    <div className={`max-w-4xl mx-auto pb-12 ${className}`}>
+      {/* El progreso ahora se maneja en el Modal superior estilo Duolingo */}
 
-      <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+      <div className="card-duo min-h-[500px] flex flex-col">
         {showPractice ? (
-          <div>
+          <div className="flex-grow flex flex-col">
             <GesturePractice
               gestures={gestures}
               onComplete={handleCompletePractice}
-              className="min-h-[600px]"
+              className="flex-grow"
             />
 
-            <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
+            <div className="p-6 border-t-2 border-duo-gray">
               <button
                 onClick={() => setShowPractice(false)}
-                className="w-full px-6 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-slate-200"
+                className="btn-duo-white w-full text-xs"
               >
-                <ChevronLeft className="w-5 h-5" />
-                Revisar contenido de la lección
+                VOLVER A LA LECCIÓN
               </button>
             </div>
           </div>
         ) : (
-          <div className="p-8 lg:p-12">
-            <div className="mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4 border border-blue-200">
-                <BookOpen className="w-4 h-4" />
-                Lección {currentStep + 1}
+          <div className="flex flex-col flex-grow">
+            <div className="p-8 sm:p-12 flex-grow">
+              <div className="mb-10 text-center">
+                <span className="inline-block px-4 py-2 bg-duo-blue/10 text-duo-blue rounded-xl text-xs font-black uppercase tracking-widest mb-6">
+                  Paso {currentStep + 1} de {totalSteps}
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-black text-duo-text mb-6 uppercase tracking-tight">
+                  {currentContentStep.titulo}
+                </h2>
+                <div className="h-2 w-20 bg-duo-blue mx-auto rounded-full mb-8"></div>
+                <p className="text-xl font-bold text-duo-gray-dark leading-relaxed max-w-2xl mx-auto">
+                  {currentContentStep.descripcion}
+                </p>
               </div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4 leading-tight">
-                {currentContentStep.titulo}
-              </h2>
-              <p className="text-lg lg:text-xl text-slate-600 leading-relaxed">
-                {currentContentStep.descripcion}
-              </p>
-            </div>
 
-            <div className="mb-8">
-              <MediaRenderer media={currentContentStep.media} />
-            </div>
+              <div className="mb-12">
+                <MediaRenderer media={currentContentStep.media} />
+              </div>
 
-            <div className="prose prose-lg max-w-none">
-              <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl border border-slate-200">
-                <p className="text-slate-700 leading-relaxed text-lg m-0">
+              <div className="bg-duo-background-soft rounded-2xl p-8 border-2 border-duo-gray">
+                <p className="text-duo-text font-bold leading-relaxed text-lg sm:text-xl text-center">
                   {currentContentStep.contenido}
                 </p>
               </div>
             </div>
+
+            {/* Navegación interna de la lección */}
+            <div className="p-6 border-t-2 border-duo-gray flex items-center justify-between">
+              <button
+                onClick={goToPreviousStep}
+                disabled={currentStep === 0}
+                className={`btn-duo-white px-4 ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}`}
+              >
+                <ChevronLeft className="w-6 h-6" strokeWidth={3} />
+              </button>
+
+              <div className="flex space-x-2">
+                {sortedContent.map((_, idx) => (
+                  <div 
+                    key={idx}
+                    className={`h-2 rounded-full transition-all duration-300 ${idx === currentStep ? 'w-8 bg-duo-blue' : 'w-2 bg-duo-gray'}`}
+                  ></div>
+                ))}
+              </div>
+
+              <button
+                onClick={goToNextStep}
+                className="btn-duo-blue px-4"
+              >
+                <ChevronRight className="w-6 h-6" strokeWidth={3} />
+              </button>
+            </div>
           </div>
         )}
-
-        <div className="px-4 sm:px-8 py-4 sm:py-6 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
-          <div className="flex items-center justify-between gap-2 sm:gap-4">
-            <button
-              onClick={goToPreviousStep}
-              disabled={currentStep === 0 && !showPractice}
-              className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-2xl font-semibold transition-all duration-300 min-w-[100px] sm:min-w-[120px] ${
-                currentStep === 0 && !showPractice
-                  ? 'text-slate-400 cursor-not-allowed bg-slate-200'
-                  : 'text-slate-700 hover:bg-white hover:shadow-md bg-white/50 border border-slate-200'
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base hidden sm:inline">Anterior</span>
-            </button>
-
-            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500">
-              {showPractice ? (
-                <span className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
-                  <PlayCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Práctica</span>
-                </span>
-              ) : (
-                <span className="px-3 sm:px-4 py-2 bg-white rounded-full border border-slate-200">
-                  {currentStep + 1} / {totalSteps}
-                </span>
-              )}
-            </div>
-
-            <button
-              onClick={goToNextStep}
-              className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 min-w-[100px] sm:min-w-[120px]"
-            >
-              <span className="text-sm sm:text-base">
-                {currentStep === totalSteps - 1 
-                  ? (!gestures || gestures.length === 0 ? 'Completar' : 'Completar')
-                  : 'Siguiente'
-                }
-              </span>
-              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

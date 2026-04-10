@@ -41,20 +41,20 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center ${UI_CONFIG.GRADIENTS.AUTH}`}>
-      <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          🤟 Rimanq
+    <div className="min-h-screen flex items-center justify-center bg-duo-background-soft p-4">
+      <div className="card-duo w-full max-w-md p-10">
+        <h1 className="text-4xl font-black text-center mb-2 text-duo-blue">
+          RIMANAQ
         </h1>
-        <h3 className="text-lg text-center mb-6 text-gray-600">
-          ¡Bienvenido de nuevo! Por favor, inicia sesión para continuar.
+        <h3 className="text-xl font-bold text-center mb-8 text-duo-text">
+          ¡Aprende LSP de forma divertida!
         </h3>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Correo electrónico
+            <label htmlFor="email" className="block text-sm font-black text-duo-gray-dark mb-2 uppercase tracking-wide">
+              Email
             </label>
             <input
               type="email"
@@ -63,16 +63,18 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-duo"
               placeholder="tu@email.com"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Contraseña
-            </label>
+            <div className="flex justify-between mb-2">
+              <label htmlFor="password" className="text-sm font-black text-duo-gray-dark uppercase tracking-wide">
+                Contraseña
+              </label>
+            </div>
             <input
               type="password"
               id="password"
@@ -80,14 +82,14 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-duo"
               placeholder="••••••••"
             />
           </div>
 
           {/* Error */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="bg-duo-red/10 border-2 border-duo-red text-duo-red px-4 py-3 rounded-xl font-bold">
               ❌ {error}
             </div>
           )}
@@ -96,21 +98,21 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="w-full btn-duo-blue"
           >
-            {loading ? '⏳ Iniciando sesión...' : '✨ Empezar a aprender'}
+            {loading ? 'INGRESANDO...' : 'INGRESAR'}
           </button>
         </form>
 
         {/* Registro */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            ¿No tienes cuenta?{' '}
+        <div className="mt-8 pt-6 border-t-2 border-duo-gray text-center text-duo-text font-bold">
+          <p>
+            ¿Eres nuevo por aquí?{' '}
             <button
               onClick={onGoToRegister}
-              className="text-blue-500 hover:text-blue-700 font-medium"
+              className="text-duo-blue hover:text-duo-blue-dark transition-colors uppercase"
             >
-              Crear cuenta →
+              Crea una cuenta
             </button>
           </p>
         </div>

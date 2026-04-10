@@ -85,15 +85,15 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
   return (
     <div className="max-w-6xl mx-auto">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-white mb-4">
-          ¡Aprende Lengua de Señas Peruana!
+        <h2 className="text-5xl font-black text-duo-text mb-4 uppercase tracking-tight">
+          ¿Qué quieres aprender hoy?
         </h2>
-        <p className="text-xl text-white/80">
-          Descubre el mundo de la comunicación visual
+        <p className="text-xl font-bold text-duo-gray-dark">
+          Explora la Lengua de Señas Peruana paso a paso
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
         {courses.map((course) => {
           const stats = getCourseStats(course.id);
           const levelsCount = course.levels?.length || 0;
@@ -101,103 +101,74 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
           return (
             <div
               key={course.id}
-              className="group relative bg-white rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-300 cursor-pointer"
+              className="card-duo-interactive h-full flex flex-col p-0 overflow-hidden"
               onClick={() => onSelectCourse(course)}
             >
-              {/* Header con imagen o color de fondo */}
+              {/* Header con imagen o color de fondo sólido */}
               <div 
-                className="h-48 relative overflow-hidden"
+                className="h-44 relative overflow-hidden"
                 style={{ 
-                  background: getImageUrl(course.image_path) 
-                    ? 'transparent' 
-                    : `linear-gradient(135deg, ${course.color}, ${course.color}80)`
+                  backgroundColor: course.color || '#1CB0F6'
                 }}
               >
-                {getImageUrl(course.image_path) ? (
-                  <>
-                    <img 
-                      src={getImageUrl(course.image_path)!} 
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback si la imagen no carga
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const parent = target.parentElement;
-                        if (parent) {
-                          parent.style.background = `linear-gradient(135deg, ${course.color}, ${course.color}80)`;
-                        }
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black/20"></div>
-                  </>
-                ) : (
-                  <div className="absolute inset-0 bg-black/20"></div>
+                {getImageUrl(course.image_path) && (
+                  <img 
+                    src={getImageUrl(course.image_path)!} 
+                    alt={course.title}
+                    className="w-full h-full object-cover mix-blend-multiply opacity-80"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
                 )}
                 
-                {/* Icono para LSP - mostrar solo si no hay imagen o como overlay */}
-                <div className="absolute top-4 right-4 text-4xl">
-                  
-                </div>
-                
-                {/* Estadísticas de progreso */}
-                <div className="absolute bottom-4 left-4 flex space-x-2">
+                {/* Estadísticas de progreso flotantes */}
+                <div className="absolute top-4 left-4 flex space-x-2">
                   {stats.completed > 0 && (
-                    <>
-                      <div className="flex items-center space-x-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                        <Trophy className="w-4 h-4 text-yellow-300" />
-                        <span className="text-white text-sm font-semibold">{stats.completed}</span>
-                      </div>
-                      <div className="flex items-center space-x-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                        <Star className="w-4 h-4 text-yellow-300 fill-current" />
-                        <span className="text-white text-sm font-semibold">{stats.totalScore}</span>
-                      </div>
-                    </>
+                    <div className="flex items-center space-x-1 bg-white rounded-xl px-3 py-1.5 border-b-4 border-duo-gray shadow-sm">
+                      <Trophy className="w-4 h-4 text-duo-yellow fill-duo-yellow" />
+                      <span className="text-duo-text text-sm font-black">{stats.completed}</span>
+                    </div>
                   )}
                 </div>
               </div>
 
               {/* Contenido del curso */}
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+              <div className="p-6 flex-grow flex flex-col">
+                <h3 className="text-2xl font-black text-duo-text mb-2 uppercase tracking-tight">
                   {course.title}
                 </h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">
+                <p className="text-duo-gray-dark font-bold mb-6 line-clamp-2">
                   {course.description}
                 </p>
 
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm text-gray-500">
-                    {levelsCount > 0 ? `${levelsCount} niveles` : 'Próximamente'}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Play className="w-5 h-5 text-blue-500 group-hover:text-blue-600 transition-colors" />
-                    <span className="text-blue-500 group-hover:text-blue-600 font-semibold transition-colors">
-                      {levelsCount > 0 ? 'Comenzar' : 'Ver detalles'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Barra de progreso */}
-                {stats.completed > 0 && levelsCount > 0 && (
-                  <div className="mt-4">
-                    <div className="flex justify-between text-sm text-gray-500 mb-1">
-                      <span>Progreso</span>
-                      <span>{stats.completed}/{levelsCount}</span>
+                <div className="mt-auto">
+                  {/* Barra de progreso estilo Duolingo */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-end">
+                      <span className="text-xs font-black text-duo-gray-dark uppercase tracking-widest">
+                        {levelsCount > 0 ? `${levelsCount} NIVELES` : 'PRÓXIMAMENTE'}
+                      </span>
+                      {stats.completed > 0 && (
+                        <span className="text-sm font-black text-duo-green">
+                          {Math.round((stats.completed / levelsCount) * 100)}%
+                        </span>
+                      )}
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-duo-gray rounded-full h-4 overflow-hidden">
                       <div 
-                        className="h-2 rounded-full transition-all duration-500"
+                        className="h-full bg-duo-green rounded-full transition-all duration-500"
                         style={{ 
-                          background: `linear-gradient(90deg, ${course.color}, ${course.color}80)`,
                           width: `${(stats.completed / levelsCount) * 100}%` 
                         }}
                       ></div>
                     </div>
                   </div>
-                )}
-
-
+                  
+                  <button className="w-full mt-6 btn-duo-white text-sm">
+                    {levelsCount > 0 ? 'EMPEZAR' : 'VER DETALLES'}
+                  </button>
+                </div>
               </div>
             </div>
           );
@@ -206,13 +177,13 @@ const CourseSelection: React.FC<CourseSelectionProps> = ({
 
       {/* Mensaje cuando no hay cursos */}
       {courses.length === 0 && !loading && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4"></div>
-          <h3 className="text-2xl font-bold text-white mb-2">
+        <div className="text-center py-20 card-duo bg-white">
+          <div className="text-6xl mb-6">🏜️</div>
+          <h3 className="text-3xl font-black text-duo-text mb-2">
             No hay cursos disponibles
           </h3>
-          <p className="text-white/80">
-            Pronto agregaremos más cursos de Lengua de Señas Peruana
+          <p className="text-xl font-bold text-duo-gray-dark">
+            Pronto agregaremos más lecciones para ti.
           </p>
         </div>
       )}

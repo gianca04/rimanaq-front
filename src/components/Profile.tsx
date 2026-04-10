@@ -134,38 +134,38 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
     };
 
     return (
-        <div className={`min-h-screen ${UI_CONFIG.GRADIENTS.MAIN}`}>
-            <div className="container mx-auto px-4 py-6">
+        <div className="min-h-screen bg-duo-background-soft">
+            <div className="container mx-auto px-4 py-12">
                 <div className="max-w-2xl mx-auto">
 
                     {/* Header */}
                     <div className="flex items-center mb-8">
                         <button
                             onClick={onBack}
-                            className="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors duration-200"
+                            className="btn-duo-white px-4 py-2"
                         >
-                            <ArrowLeft className="w-5 h-5" />
-                            <span>Volver</span>
+                            <ArrowLeft className="w-5 h-5" strokeWidth={3} />
+                            <span className="ml-2 font-black uppercase text-xs">Atrás</span>
                         </button>
-                        <h1 className="text-3xl font-bold text-white ml-6">
-                            Mi Perfil
+                        <h1 className="text-3xl font-black text-duo-text ml-8 uppercase tracking-tight">
+                            Tu Perfil
                         </h1>
                     </div>
 
                     {/* Formulario */}
-                    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                        <div className="p-8">
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="card-duo">
+                        <div className="p-2 sm:p-4">
+                            <form onSubmit={handleSubmit} className="space-y-8">
 
                                 {/* Información básica */}
                                 <div>
-                                    <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                                        📋 Información básica
+                                    <h2 className="text-sm font-black text-duo-gray-dark mb-6 uppercase tracking-widest border-b-2 border-duo-gray pb-2">
+                                        DATOS PERSONALES
                                     </h2>
 
                                     {/* Nombre */}
-                                    <div className="mb-4">
-                                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <div className="mb-6">
+                                        <label htmlFor="name" className="block text-xs font-black text-duo-text mb-2 uppercase tracking-wide">
                                             Nombre completo
                                         </label>
                                         <input
@@ -175,14 +175,14 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="input-duo"
                                             placeholder="Tu nombre completo"
                                         />
                                     </div>
 
                                     {/* Email */}
-                                    <div className="mb-4">
-                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                    <div className="mb-6">
+                                        <label htmlFor="email" className="block text-xs font-black text-duo-text mb-2 uppercase tracking-wide">
                                             Email
                                         </label>
                                         <input
@@ -192,32 +192,32 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="input-duo"
                                             placeholder="tu@email.com"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Sección de contraseña */}
-                                <div className="border-t pt-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h2 className="text-xl font-semibold text-gray-800">
-                                            🔒 Contraseña
+                                <div className="pt-4">
+                                    <div className="flex items-center justify-between mb-6 border-b-2 border-duo-gray pb-2">
+                                        <h2 className="text-sm font-black text-duo-gray-dark uppercase tracking-widest">
+                                            SEGURIDAD
                                         </h2>
                                         <button
                                             type="button"
                                             onClick={() => setIsChangingPassword(!isChangingPassword)}
-                                            className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                                            className="text-duo-blue hover:text-duo-blue-dark text-xs font-black uppercase tracking-wide"
                                         >
-                                            {isChangingPassword ? 'Cancelar cambio' : 'Cambiar contraseña'}
+                                            {isChangingPassword ? 'CANCELAR' : 'CAMBIAR CONTRASEÑA'}
                                         </button>
                                     </div>
 
                                     {isChangingPassword && (
-                                        <div className="space-y-4">
+                                        <div className="space-y-6 animate-in slide-in-from-top duration-300">
                                             {/* Contraseña actual */}
                                             <div>
-                                                <label htmlFor="current_password" className="block text-sm font-medium text-gray-700 mb-2">
+                                                <label htmlFor="current_password" className="block text-xs font-black text-duo-text mb-2 uppercase tracking-wide">
                                                     Contraseña actual
                                                 </label>
                                                 <div className="relative">
@@ -227,13 +227,13 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                                                         name="current_password"
                                                         value={formData.current_password}
                                                         onChange={handleChange}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                                                        className="input-duo pr-12"
                                                         placeholder="Tu contraseña actual"
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                                        className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-duo-gray-dark hover:text-duo-text"
                                                     >
                                                         {showCurrentPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                                     </button>
@@ -242,7 +242,7 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
 
                                             {/* Nueva contraseña */}
                                             <div>
-                                                <label htmlFor="new_password" className="block text-sm font-medium text-gray-700 mb-2">
+                                                <label htmlFor="new_password" className="block text-xs font-black text-duo-text mb-2 uppercase tracking-wide">
                                                     Nueva contraseña
                                                 </label>
                                                 <div className="relative">
@@ -252,13 +252,13 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                                                         name="new_password"
                                                         value={formData.new_password}
                                                         onChange={handleChange}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                                                        className="input-duo pr-12"
                                                         placeholder="Nueva contraseña (mín. 8 caracteres)"
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowNewPassword(!showNewPassword)}
-                                                        className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-duo-gray-dark hover:text-duo-text"
                                                     >
                                                         {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                                     </button>
@@ -267,7 +267,7 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
 
                                             {/* Confirmar nueva contraseña */}
                                             <div>
-                                                <label htmlFor="new_password_confirmation" className="block text-sm font-medium text-gray-700 mb-2">
+                                                <label htmlFor="new_password_confirmation" className="block text-xs font-black text-duo-text mb-2 uppercase tracking-wide">
                                                     Confirmar nueva contraseña
                                                 </label>
                                                 <input
@@ -276,7 +276,7 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                                                     name="new_password_confirmation"
                                                     value={formData.new_password_confirmation}
                                                     onChange={handleChange}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="input-duo"
                                                     placeholder="Confirma tu nueva contraseña"
                                                 />
                                             </div>
@@ -286,13 +286,13 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
 
                                 {/* Mensajes */}
                                 {error && (
-                                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                                    <div className="bg-duo-red/10 border-2 border-duo-red text-duo-red px-4 py-3 rounded-xl font-bold">
                                         ❌ {error}
                                     </div>
                                 )}
 
                                 {success && (
-                                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                                    <div className="bg-duo-green/10 border-2 border-duo-green text-duo-green px-4 py-3 rounded-xl font-bold">
                                         {success}
                                     </div>
                                 )}
@@ -302,10 +302,10 @@ const Profile: React.FC<ProfileProps> = ({ onBack }) => {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full bg-blue-500 text-white py-3 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2"
+                                        className="w-full btn-duo-green"
                                     >
-                                        <Save className="w-5 h-5" />
-                                        <span>{loading ? '⏳ Guardando...' : 'Guardar cambios'}</span>
+                                        <Save className="w-5 h-5 mr-2" strokeWidth={3} />
+                                        <span>{loading ? 'GUARDANDO...' : 'GUARDAR CAMBIOS'}</span>
                                     </button>
                                 </div>
                             </form>

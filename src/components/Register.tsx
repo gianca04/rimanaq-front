@@ -68,17 +68,17 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center ${UI_CONFIG.GRADIENTS.REGISTER}`}>
-      <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          🆕 Registro LSP
+    <div className="min-h-screen flex items-center justify-center bg-duo-background-soft p-4">
+      <div className="card-duo w-full max-w-md p-10">
+        <h1 className="text-3xl font-black text-center mb-8 text-duo-text uppercase tracking-tight">
+          Crea tu perfil
         </h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-              👤 Nombre completo
+            <label htmlFor="name" className="block text-sm font-black text-duo-gray-dark mb-2 uppercase tracking-wide">
+              Nombre completo
             </label>
             <input
               type="text"
@@ -87,14 +87,14 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="input-duo"
               placeholder="Tu nombre completo"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-black text-duo-gray-dark mb-2 uppercase tracking-wide">
               Email
             </label>
             <input
@@ -104,14 +104,14 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="input-duo"
               placeholder="tu@email.com"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-black text-duo-gray-dark mb-2 uppercase tracking-wide">
               Contraseña
             </label>
             <input
@@ -121,14 +121,14 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="input-duo"
               placeholder="••••••••"
             />
           </div>
 
           {/* Password Confirmation */}
           <div>
-            <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password_confirmation" className="block text-sm font-black text-duo-gray-dark mb-2 uppercase tracking-wide">
               Confirmar contraseña
             </label>
             <input
@@ -138,14 +138,14 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
               value={formData.password_confirmation}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="input-duo"
               placeholder="••••••••"
             />
           </div>
 
           {/* Error */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="bg-duo-red/10 border-2 border-duo-red text-duo-red px-4 py-3 rounded-xl font-bold">
               ❌ {error}
             </div>
           )}
@@ -154,24 +154,24 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess, onBackToLogin })
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="w-full btn-duo-green"
           >
-            {loading ? '⏳ Registrando...' : '🚀 Crear cuenta'}
+            {loading ? 'CREANDO CUENTA...' : 'CREAR CUENTA'}
           </button>
         </form>
 
         {/* Back to Login */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={onBackToLogin}
-            className="text-blue-500 hover:text-blue-700 text-sm font-medium"
-          >
-            ← Volver al login
-          </button>
+        <div className="mt-8 pt-6 border-t-2 border-duo-gray text-center text-duo-text font-bold">
+          <p>
+            ¿Ya tienes cuenta?{' '}
+            <button
+              onClick={onBackToLogin}
+              className="text-duo-blue hover:text-duo-blue-dark transition-colors uppercase"
+            >
+              Iniciar sesión
+            </button>
+          </p>
         </div>
-
-        {/* Info */}
-        
       </div>
     </div>
   );

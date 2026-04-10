@@ -4,7 +4,7 @@
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: 'https://rimanaq.sat-industriales.pe/api',
+  BASE_URL: import.meta.env.VITE_API_URL || 'https://rimanaq.sat-sistemas.uk/api',
   TIMEOUT: 10000, // 10 seconds
 } as const;
 
@@ -37,12 +37,22 @@ export const MESSAGES = {
   },
 } as const;
 
-// UI Configuration
+// UI Configuration (Duolingo Style - Flat Colors)
 export const UI_CONFIG = {
-  GRADIENTS: {
-    AUTH: 'bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500',
-    REGISTER: 'bg-gradient-to-br from-green-500 via-blue-500 to-purple-500',
-    MAIN: 'bg-gradient-to-br from-blue-500 via-teal-400 to-green-400',
+  COLORS: {
+    PRIMARY: '#58CC02', // Duolingo Green
+    SECONDARY: '#1CB0F6', // Duolingo Blue
+    ACCENT: '#FFC800', // Duolingo Yellow
+    TEXT: '#4B4B4B',
+    BACKGROUND: '#FFFFFF',
+    BORDER: '#E5E5E5',
+    ERROR: '#FF4B4B',
+  },
+  // Manteniendo las claves pero sin gradientes
+  STYLES: {
+    AUTH: 'bg-white',
+    REGISTER: 'bg-white',
+    MAIN: 'bg-[#F7F7F7]',
   },
 } as const;
 

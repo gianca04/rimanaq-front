@@ -111,121 +111,96 @@ const LessonModal: React.FC<LessonModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md flex items-center justify-center z-50 p-2 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[98vh] sm:max-h-[95vh] overflow-hidden transform animate-in zoom-in-95 duration-300">
-        {/* Header mejorado */}
-        <div className="relative h-24 sm:h-28 overflow-hidden">
-          {/* Fondo con gradiente y patrón */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(135deg, ${course.color} 0%, ${course.color}cc 50%, ${course.color}99 100%)`
-            }}
-          >
-            <div className="absolute inset-0 opacity-10" style={{
-              backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-              backgroundSize: '32px 32px'
-            }}></div>
-          </div>
-
-          {/* Overlay sutil */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30"></div>
-
-          {/* Botón cerrar mejorado */}
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-9 h-9 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full transition-all duration-200 flex items-center justify-center group active:scale-95"
-          >
-            <X className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-300" />
-          </button>
-
-          {/* Información de la lección mejorada */}
-          <div className="absolute bottom-3 left-4 right-14 sm:bottom-4 sm:left-6 sm:right-20">
-            <div className="flex items-center space-x-2 sm:space-x-2.5 text-white mb-2">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
-                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2.5} />
-              </div>
-              <span className="font-bold text-base sm:text-lg truncate drop-shadow-md">
-                {lessonData?.name || level.title}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="flex items-center space-x-1.5 bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-lg">
-                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} />
-                <span className="text-xs sm:text-sm font-medium">
-                  {lessonData?.time_minutes || level.estimatedTime} min
-                </span>
-              </div>
-              <div className={`px-3 py-1 rounded-lg text-xs font-semibold border ${getDifficultyColor(lessonData?.difficulty || level.difficulty)}`}>
-                {lessonData?.difficulty || level.difficulty}
-              </div>
-            </div>
-          </div>
+    <div className="fixed inset-0 bg-white z-50 flex flex-col animate-in fade-in duration-200">
+      {/* Header Estilo Duolingo */}
+      <div className="container mx-auto px-4 py-6 flex items-center space-x-4">
+        <button
+          onClick={onClose}
+          className="text-duo-gray-dark hover:text-duo-text transition-colors"
+        >
+          <X className="w-8 h-8" strokeWidth={3} />
+        </button>
+        
+        {/* Barra de progreso superior */}
+        <div className="flex-grow bg-duo-gray rounded-full h-4 overflow-hidden">
+          <div 
+            className="h-full bg-duo-green rounded-full transition-all duration-500 shadow-[inset_0_-4px_0_rgba(0,0,0,0.1)]"
+            style={{ width: isCompleted ? '100%' : '50%' }} // Simulado, debería ser real según el paso
+          ></div>
         </div>
 
-        {/* Contenido principal con mejor espaciado */}
-        <div className="overflow-y-auto max-h-[calc(98vh-96px)] sm:max-h-[calc(95vh-112px)] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
+        <div className="flex items-center space-x-2 text-duo-yellow">
+          <Star className="w-6 h-6 fill-current" strokeWidth={3} />
+          <span className="font-black text-lg">3</span>
+        </div>
+      </div>
+
+      {/* Contenido principal */}
+      <div className="flex-grow overflow-y-auto">
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
           {!isCompleted ? (
-            <LessonContentRenderer
-              content={lessonData?.content || null}
-              gestures={lessonData?.gestures || null}
-              onComplete={handleComplete}
-              className="p-4 sm:p-8"
-            />
+            <div className="animate-in slide-in-from-bottom duration-500">
+              <h2 className="text-3xl font-black text-duo-text mb-8 text-center uppercase tracking-tight">
+                {lessonData?.name || level.title}
+              </h2>
+              <LessonContentRenderer
+                content={lessonData?.content || null}
+                gestures={lessonData?.gestures || null}
+                onComplete={handleComplete}
+                className="p-0"
+              />
+            </div>
           ) : (
-            /* Pantalla de completado mejorada */
-            <div className="p-6 sm:p-12 text-center">
-              {/* Animación de éxito */}
-              <div className="relative inline-flex mb-6 sm:mb-8">
-                <div className="absolute inset-0 bg-emerald-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center transform animate-in zoom-in-90 duration-500">
-                  <CheckCircle className="w-14 h-14 sm:w-16 sm:h-16 text-white" strokeWidth={2.5} />
-                </div>
+            /* Pantalla de completado estilo Duolingo */
+            <div className="flex flex-col items-center justify-center py-12 animate-in zoom-in-95 duration-500">
+              <div className="w-48 h-48 bg-duo-yellow rounded-full flex items-center justify-center shadow-[0_8px_0_#E5B400] mb-12">
+                <Trophy className="w-24 h-24 text-white" strokeWidth={3} />
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-3 sm:mb-4">
+              <h2 className="text-4xl font-black text-duo-text mb-4 uppercase tracking-tighter text-center">
                 ¡Lección completada!
               </h2>
-              <p className="text-base sm:text-lg text-slate-600 mb-8 sm:mb-10 max-w-md mx-auto leading-relaxed">
-                Has terminado <span className="font-semibold text-slate-800">"{lessonData?.name || level.title}"</span> exitosamente
+              <p className="text-xl font-bold text-duo-gray-dark mb-12 text-center">
+                Has ganado <span className="text-duo-yellow font-black">+10 XP</span>
               </p>
 
-              {/* Tarjeta de puntuación mejorada */}
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 sm:p-8 mb-8 sm:mb-10 inline-block border border-emerald-100 shadow-lg shadow-emerald-100/50">
-                <div className="flex items-center justify-center gap-3 mb-3">
-                  <Award className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-600" strokeWidth={2.5} />
-                  <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-teal-600" strokeWidth={2.5} />
+              <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+                <div className="card-duo p-6 text-center">
+                  <span className="block text-xs font-black text-duo-gray-dark uppercase mb-1">Puntos</span>
+                  <span className="text-2xl font-black text-duo-blue">150</span>
                 </div>
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Star className="w-7 h-7 sm:w-9 sm:h-9 text-amber-500 fill-amber-500" strokeWidth={2.5} />
-                  <Star className="w-7 h-7 sm:w-9 sm:h-9 text-amber-500 fill-amber-500" strokeWidth={2.5} />
-                  <Star className="w-7 h-7 sm:w-9 sm:h-9 text-amber-500 fill-amber-500" strokeWidth={2.5} />
+                <div className="card-duo p-6 text-center">
+                  <span className="block text-xs font-black text-duo-gray-dark uppercase mb-1">Tiempo</span>
+                  <span className="text-2xl font-black text-duo-green">{lessonData?.time_minutes || level.estimatedTime}m</span>
                 </div>
-                <p className="text-lg sm:text-xl font-bold text-emerald-800">
-                  Lección completada
-                </p>
-                <p className="text-sm text-emerald-600 mt-1">
-                  ¡Sigue así!
-                </p>
-              </div>
-
-              {/* Botones mejorados */}
-              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 max-w-md mx-auto">
-                <button
-                  onClick={handleReviewLesson}
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98] transition-all duration-200 shadow-sm"
-                >
-                  Revisar lección
-                </button>
-                <button
-                  onClick={onClose}
-                  className="w-full sm:w-auto px-8 sm:px-10 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-blue-600/30"
-                >
-                  Continuar
-                </button>
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Footer Fijo Duolingo */}
+      <div className="border-t-4 border-duo-gray py-6 sm:py-10 bg-white">
+        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row justify-between items-center gap-4">
+          {!isCompleted ? (
+            <p className="text-duo-gray-dark font-bold text-sm uppercase tracking-widest hidden sm:block">
+              Presiona continuar al terminar
+            </p>
+          ) : (
+            <button
+              onClick={handleReviewLesson}
+              className="btn-duo-white sm:w-auto"
+            >
+              REVISAR LECCIÓN
+            </button>
+          )}
+          
+          <button
+            onClick={isCompleted ? onClose : handleComplete}
+            className={`w-full sm:w-auto sm:px-12 ${isCompleted ? 'btn-duo-green' : 'btn-duo-blue'}`}
+          >
+            {isCompleted ? 'CONTINUAR' : 'COMPLETAR'}
+          </button>
         </div>
       </div>
     </div>
