@@ -244,7 +244,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
       {/* Popup de manteniendo posición fuera del canvas */}
       {gestureData && isActive && matchHoldTime > 0 && (
         <div className="mb-6 flex justify-center">
-          <div className="bg-white rounded-2xl px-6 py-4 shadow-xl border-b-4 border-duo-green-dark max-w-md w-full animate-bounce">
+          <div className="bg-white rounded-2xl px-6 py-4 shadow-xl border-b-4 border-duo-green-dark max-w-md w-full">
             <div className="flex items-center justify-between gap-4">
               <span className="text-sm font-black text-duo-text uppercase tracking-tight">
                 ¡MANTÉN LA POSICIÓN!

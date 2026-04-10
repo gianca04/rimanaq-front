@@ -145,7 +145,7 @@ const LevelMap: React.FC<LevelMapProps> = ({
                             )}
                              {isCompleted && (
                               <div className="flex-shrink-0 ml-3">
-                                <div className="w-12 h-12 rounded-full bg-duo-green flex items-center justify-center animate-bounce-slow border-b-4 border-duo-green-dark">
+                                <div className="w-12 h-12 rounded-full bg-duo-green flex items-center justify-center border-b-4 border-duo-green-dark">
                                   <Check className="w-7 h-7 text-white" strokeWidth={4} />
                                 </div>
                               </div>
@@ -234,13 +234,6 @@ const LevelMap: React.FC<LevelMapProps> = ({
         }
         .animate-fade-in {
           animation: fade-in 0.8s ease-out;
-        }
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 2s infinite;
         }
       `}</style>
     </div>

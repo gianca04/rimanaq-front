@@ -230,7 +230,7 @@ function AppWithAuth() {
       <div className="fixed inset-0 bg-duo-background flex items-center justify-center z-50 p-4">
         <div className="max-w-md w-full p-10 text-center">
           <div className="relative inline-flex mb-6">
-            <div className="text-6xl relative animate-bounce">🤟</div>
+            <div className="text-6xl relative">🤟</div>
           </div>
           <h3 className="text-2xl font-black text-duo-text mb-3">
             VERIFICANDO...

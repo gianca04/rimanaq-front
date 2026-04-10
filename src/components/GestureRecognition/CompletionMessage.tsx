@@ -11,7 +11,7 @@ export function CompletionMessage({ gestureName, onRestart, onComplete }: Comple
     <div className="fixed inset-0 bg-duo-text/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl p-8 max-w-md w-full border-b-8 border-duo-gray animate-scale-in">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-duo-yellow rounded-3xl mb-6 shadow-lg border-b-4 border-duo-yellow-dark animate-bounce">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-duo-yellow rounded-3xl mb-6 shadow-lg border-b-4 border-duo-yellow-dark">
             <Trophy className="w-12 h-12 text-white" />
           </div>
 

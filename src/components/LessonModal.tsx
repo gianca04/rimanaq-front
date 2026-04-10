@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Clock, Star, CheckCircle, BookOpen, Loader, Award, TrendingUp } from 'lucide-react';
+import { X, Clock, Star, CheckCircle, BookOpen, Loader, Award, TrendingUp, Trophy } from 'lucide-react';
 import { CourseWithLevels, Level, LevelProgress, Lesson } from '../types';
 import { CourseService } from '../services/courseService';
 import LessonContentRenderer from './LessonContentRenderer';
