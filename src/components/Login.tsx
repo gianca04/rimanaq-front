@@ -41,7 +41,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center bg-duo-background-soft p-4 bg-repeat"
       style={{ backgroundImage: "url('/wallpaper_login.jpeg')", backgroundSize: "250px" }}
     >
@@ -55,7 +55,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
         <h3 className="text-xl font-bold text-center mb-8 text-duo-text">
           ¡Aprende LSP de forma divertida!
         </h3>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email */}
           <div>
