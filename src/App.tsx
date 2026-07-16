@@ -240,11 +240,20 @@ function AppWithAuth() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <AuthScreen onAuthSuccess={handleLoginSuccess} />;
-  }
+  return (
+    <div className="relative">
+      {!isAuthenticated ? (
+        <AuthScreen onAuthSuccess={handleLoginSuccess} />
+      ) : (
+        <AuthenticatedApp />
+      )}
 
-  return <AuthenticatedApp />;
+      {/* Logo institucional super pequeño y con 50% de opacidad siempre presente */}
+      <div className="fixed bottom-4 left-4 opacity-50 select-none pointer-events-none z-50">
+        <img src="/logo.svg" alt="Logo Institucional" className="h-8 w-auto" />
+      </div>
+    </div>
+  );
 }
 
 // Componente principal que envuelve todo con el AuthProvider

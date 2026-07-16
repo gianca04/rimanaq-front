@@ -42,8 +42,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center bg-duo-background-soft p-4 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/wallpaper_login.jpeg')" }}
+      className="min-h-screen flex items-center justify-center bg-duo-background-soft p-4 bg-repeat"
+      style={{ backgroundImage: "url('/wallpaper_login.jpeg')", backgroundSize: "250px" }}
     >
       <div className="card-duo w-full max-w-md p-10">
         <div className="flex flex-col items-center mb-4">
