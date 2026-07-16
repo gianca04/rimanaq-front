@@ -41,11 +41,17 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onGoToRegister }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-duo-background-soft p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center bg-duo-background-soft p-4 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/wallpaper_login.jpeg')" }}
+    >
       <div className="card-duo w-full max-w-md p-10">
-        <h1 className="text-4xl font-black text-center mb-2 text-duo-blue">
-          RIMANAQ
-        </h1>
+        <div className="flex flex-col items-center mb-4">
+          <img src="/logo.svg" alt="Logo de la Institución" className="h-20 w-auto mb-3" />
+          <h1 className="text-4xl font-black text-center text-duo-blue">
+            RIMANAQ
+          </h1>
+        </div>
         <h3 className="text-xl font-bold text-center mb-8 text-duo-text">
           ¡Aprende LSP de forma divertida!
         </h3>
