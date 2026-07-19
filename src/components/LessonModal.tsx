@@ -23,6 +23,7 @@ const LessonModal: React.FC<LessonModalProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState(currentProgress?.completed || false);
+  const [isPracticeMode, setIsPracticeMode] = useState(false);
 
   useEffect(() => {
     const loadLessonData = async () => {
@@ -140,13 +141,16 @@ const LessonModal: React.FC<LessonModalProps> = ({
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           {!isCompleted ? (
             <div className="animate-in slide-in-from-bottom duration-500">
-              <h2 className="text-3xl font-black text-duo-text mb-8 text-center uppercase tracking-tight">
-                {lessonData?.name || level.title}
-              </h2>
+              {!isPracticeMode && (
+                <h2 className="text-3xl font-black text-duo-text mb-8 text-center uppercase tracking-tight">
+                  {lessonData?.name || level.title}
+                </h2>
+              )}
               <LessonContentRenderer
                 content={lessonData?.content || null}
                 gestures={lessonData?.gestures || null}
                 onComplete={handleComplete}
+                onShowPracticeChange={setIsPracticeMode}
                 className="p-0"
               />
             </div>

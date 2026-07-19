@@ -7,6 +7,7 @@ interface LessonContentRendererProps {
   content: LessonContentStep[] | null;
   gestures?: Gesture[] | null;
   onComplete?: () => void;
+  onShowPracticeChange?: (show: boolean) => void;
   className?: string;
 }
 
@@ -14,6 +15,7 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
   content,
   gestures,
   onComplete,
+  onShowPracticeChange,
   className = ''
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -45,6 +47,11 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
   const sortedContent = [...content].sort((a, b) => a.index - b.index);
   const totalSteps = sortedContent.length;
 
+  const handleShowPracticeChange = (show: boolean) => {
+    setShowPractice(show);
+    onShowPracticeChange?.(show);
+  };
+
   const goToNextStep = () => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
@@ -53,14 +60,14 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
       if (!gestures || gestures.length === 0) {
         onComplete?.();
       } else {
-        setShowPractice(true);
+        handleShowPracticeChange(true);
       }
     }
   };
 
   const goToPreviousStep = () => {
     if (showPractice) {
-      setShowPractice(false);
+      handleShowPracticeChange(false);
     } else if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }

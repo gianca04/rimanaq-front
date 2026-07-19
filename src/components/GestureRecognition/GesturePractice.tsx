@@ -162,16 +162,18 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
 
   return (
     <div className={`w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 ${className}`}>
-      <div className="text-center mb-8 sm:mb-12">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-duo-blue rounded-3xl mb-6 shadow-lg border-b-4 border-duo-blue-dark">
-          <Hand className="w-10 h-10 text-white" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b-2 border-duo-gray pb-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Hand className="w-6 h-6 text-duo-blue" strokeWidth={2.5} />
+            <h2 className="text-xl sm:text-2xl font-black text-duo-text tracking-tight uppercase">
+              Práctica de Señas
+            </h2>
+          </div>
+          <p className="text-sm sm:text-base text-duo-gray-dark font-medium">
+            Domina el lenguaje de señas con inteligencia artificial
+          </p>
         </div>
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-duo-text mb-4 tracking-tight uppercase">
-          Práctica de Señas
-        </h2>
-        <p className="text-xl sm:text-2xl text-duo-gray-dark max-w-2xl mx-auto font-bold italic">
-          Domina el lenguaje de señas con inteligencia artificial
-        </p>
       </div>
 
       {gestures && gestures.length > 1 && (
@@ -190,18 +192,16 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                 <button
                   key={gesture.id}
                   onClick={() => handleGestureSelect(index)}
-                  className={`group relative p-5 rounded-2xl text-left transition-all duration-100 border-2 border-b-4 transform active:translate-y-1 ${
-                    selectedGestureIndex === index
-                      ? 'border-duo-blue bg-white'
-                      : 'border-duo-gray bg-white hover:border-duo-blue-dark'
-                  }`}
+                  className={`group relative p-5 rounded-2xl text-left transition-all duration-100 border-2 border-b-4 transform active:translate-y-1 ${selectedGestureIndex === index
+                    ? 'border-duo-blue bg-white'
+                    : 'border-duo-gray bg-white hover:border-duo-blue-dark'
+                    }`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
-                      selectedGestureIndex === index
-                        ? 'bg-duo-blue text-white'
-                        : 'bg-duo-background-soft text-duo-gray-dark group-hover:bg-duo-blue/10'
-                    }`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${selectedGestureIndex === index
+                      ? 'bg-duo-blue text-white'
+                      : 'bg-duo-background-soft text-duo-gray-dark group-hover:bg-duo-blue/10'
+                      }`}>
                       <Hand className="w-5 h-5" />
                     </div>
                     {selectedGestureIndex === index && (
@@ -210,9 +210,8 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                       </div>
                     )}
                   </div>
-                  <div className={`font-black text-base mb-1 truncate uppercase tracking-tight ${
-                    selectedGestureIndex === index ? 'text-duo-blue' : 'text-duo-text'
-                  }`}>
+                  <div className={`font-black text-base mb-1 truncate uppercase tracking-tight ${selectedGestureIndex === index ? 'text-duo-blue' : 'text-duo-text'
+                    }`}>
                     {gesture.gesture_data?.name || `Seña ${gesture.id}`}
                   </div>
                   <div className="text-xs font-bold text-duo-gray-dark uppercase tracking-wider">
@@ -263,8 +262,31 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
         </div>
       )}
 
-       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
+        <div className="lg:col-span-2 space-y-4">
+          {/* HUD de la Seña actual */}
+          {gestureData && (
+            <div className="bg-white border-2 border-duo-gray rounded-2xl p-4 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-duo-blue/10 flex items-center justify-center text-duo-blue font-black">
+                  🤟
+                </div>
+                <div>
+                  <span className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest block leading-none mb-1">Seña Objetivo</span>
+                  <p className="font-black text-duo-text text-lg uppercase leading-none">
+                    {gestureData.name}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest block leading-none mb-1">Progreso</span>
+                <span className="inline-block px-3 py-1 bg-duo-blue text-white rounded-xl text-xs font-black">
+                  Paso {currentFrameIndex + 1} de {gestureData.frames.length}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-duo-gray relative group">
             <div className="relative aspect-video bg-slate-900 overflow-hidden">
               <video
@@ -309,123 +331,101 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
               )}
             </div>
           </div>
+
+          {/* Botones de control en fila horizontal debajo de la cámara */}
+          {gestureData && (
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={toggleActive}
+                disabled={!isLoaded}
+                className={isActive ? 'btn-duo-white w-full border-red-500 text-red-500 py-3 text-xs sm:text-sm' : 'btn-duo-green w-full py-3 text-xs sm:text-sm'}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  <span className="font-black uppercase tracking-wider">{isActive ? 'Pausar' : 'Iniciar'}</span>
+                </div>
+              </button>
+
+              <button
+                onClick={handleRestart}
+                className="btn-duo-white w-full py-3 text-xs sm:text-sm"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <RotateCcw className="w-4 h-4" />
+                  <span className="font-black uppercase tracking-wider">Reiniciar</span>
+                </div>
+              </button>
+
+              <button
+                onClick={handleCompletePractice}
+                className="btn-duo-blue w-full py-3 text-xs sm:text-sm"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <Check className="w-4 h-4" strokeWidth={3} />
+                  <span className="font-black uppercase tracking-wider">Finalizar</span>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="space-y-6">
-          <div className="card-duo">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-duo-text flex items-center justify-center border-b-2 border-slate-700">
-                <Play className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-xl font-black text-duo-text uppercase tracking-tight">Controles</h3>
-            </div>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-
-            {gestureData && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-1 gap-4">
-                <button
-                  onClick={toggleActive}
-                  disabled={!isLoaded}
-                  className={isActive ? 'btn-duo-white w-full border-red-500 text-red-500' : 'btn-duo-green w-full'}
-                >
-                  <div className="flex items-center gap-2">
-                    {isActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                    <span>{isActive ? 'Pausar' : 'Iniciar'}</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={handleRestart}
-                  className="btn-duo-white w-full"
-                >
-                  <div className="flex items-center gap-2">
-                    <RotateCcw className="w-5 h-5" />
-                    <span>Reiniciar</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={handleCompletePractice}
-                  className="btn-duo-blue w-full"
-                >
-                  <div className="flex items-center gap-2">
-                    <Check className="w-5 h-5" />
-                    <span>Finalizar</span>
-                  </div>
-                </button>
-              </div>
-            )}
-          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
 
           {gestureData && (
             <div className="card-duo">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-duo-blue flex items-center justify-center border-b-2 border-duo-blue-dark">
-                  <Hand className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xl font-black text-duo-text uppercase tracking-tight">
-                  Status
-                </h3>
-              </div>
-
-              <div className="space-y-4">
-                <div className="p-4 bg-duo-background-soft rounded-2xl border-2 border-duo-gray">
-                  <p className="text-xs font-black text-duo-gray-dark uppercase tracking-widest mb-1">Seña actual</p>
-                  <p className="font-black text-duo-text text-xl truncate uppercase">
-                    {gestureData.name}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
+              <details className="group" open>
+                <summary className="flex items-center justify-between cursor-pointer list-none focus:outline-none">
+                  <div className="flex items-center gap-2">
+                    <Video className="w-5 h-5 text-duo-blue" />
+                    <h3 className="text-base font-black text-duo-text uppercase tracking-tight">
+                      Ajustes de Práctica
+                    </h3>
+                  </div>
+                  <span className="transition group-open:rotate-180 text-duo-gray-dark">
+                    <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
+                  </span>
+                </summary>
+                
+                <div className="mt-4 pt-4 border-t-2 border-duo-gray space-y-4">
                   <div className="p-4 bg-duo-background-soft rounded-2xl border-2 border-duo-gray">
-                    <p className="text-xs font-black text-duo-gray-dark uppercase tracking-widest mb-1">Pasos</p>
-                    <p className="font-black text-duo-blue text-2xl">
-                      {gestureData.frames.length}
-                    </p>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-black text-duo-text uppercase tracking-tight">Precisión requerida</span>
+                      <span className="text-sm font-black text-duo-blue">{matchThreshold}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="50"
+                      max="95"
+                      step="5"
+                      value={matchThreshold}
+                      onChange={(e) => setMatchThreshold(Number(e.target.value))}
+                      className="w-full h-2 bg-duo-gray rounded-full appearance-none cursor-pointer accent-duo-blue"
+                    />
+                    <div className="flex items-center justify-between mt-1 text-[9px] font-black text-duo-gray-dark uppercase">
+                      <span>Tolerante</span>
+                      <span>Estricto</span>
+                    </div>
                   </div>
 
-                  <div className="p-4 bg-duo-background-soft rounded-2xl border-2 border-duo-gray">
-                    <p className="text-xs font-black text-duo-gray-dark uppercase tracking-widest mb-1">Modo</p>
-                    <p className="font-black text-duo-text text-xs truncate">
-                      {gestureData.isSequential ? 'SECUENCIAL' : 'INDIVIDUAL'}
-                    </p>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-3 bg-duo-background-soft rounded-xl border-2 border-duo-gray">
+                      <span className="block text-[9px] font-black text-duo-gray-dark uppercase tracking-widest mb-1">Modo</span>
+                      <span className="font-black text-duo-text text-[11px]">{gestureData.isSequential ? 'SECUENCIAL' : 'INDIVIDUAL'}</span>
+                    </div>
+                    <div className="p-3 bg-duo-background-soft rounded-xl border-2 border-duo-gray">
+                      <span className="block text-[9px] font-black text-duo-gray-dark uppercase tracking-widest mb-1">Captura</span>
+                      <span className="font-black text-duo-text text-[11px]">{(HOLD_DURATION / 1000).toFixed(1)}s</span>
+                    </div>
                   </div>
                 </div>
-
-                <div className="p-5 bg-white rounded-2xl border-2 border-duo-blue/30">
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm font-black text-duo-text uppercase tracking-tight">Precisión</p>
-                    <span className="text-2xl font-black text-duo-blue">{matchThreshold}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="50"
-                    max="95"
-                    step="5"
-                    value={matchThreshold}
-                    onChange={(e) => setMatchThreshold(Number(e.target.value))}
-                    className="w-full h-3 bg-duo-gray rounded-full appearance-none cursor-pointer accent-duo-blue"
-                  />
-                  <div className="flex items-center justify-between mt-3">
-                    <span className="text-[10px] font-black text-duo-gray-dark uppercase">Tolerante</span>
-                    <span className="text-[10px] font-black text-duo-gray-dark uppercase">Estricto</span>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-duo-background-soft rounded-2xl border-2 border-duo-gray">
-                  <p className="text-xs font-black text-duo-gray-dark uppercase tracking-widest mb-1">Tiempo de captura</p>
-                  <p className="font-black text-duo-text text-lg">
-                    {(HOLD_DURATION / 1000).toFixed(1)} segundos
-                  </p>
-                </div>
-              </div>
+              </details>
             </div>
           )}
         </div>
