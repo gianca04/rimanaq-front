@@ -84,7 +84,7 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
     <div className={`max-w-4xl mx-auto pb-12 ${className}`}>
       {/* El progreso ahora se maneja en el Modal superior estilo Duolingo */}
 
-      <div className="card-duo min-h-[500px] flex flex-col">
+      <div className={`card-duo min-h-[500px] flex flex-col ${showPractice ? 'p-2 sm:p-6' : 'p-6'}`}>
         {showPractice ? (
           <div className="flex-grow flex flex-col">
             <GesturePractice

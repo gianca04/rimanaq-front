@@ -161,7 +161,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
   };
 
   return (
-    <div className={`w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 ${className}`}>
+    <div className={`w-full max-w-7xl mx-auto px-1 sm:px-4 py-3 sm:py-6 ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b-2 border-duo-gray pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -171,7 +171,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
             </h2>
           </div>
           <p className="text-sm sm:text-base text-duo-gray-dark font-medium">
-            Domina el lenguaje de señas con inteligencia artificial
+            Es hora de aplicar lo aprendido.
           </p>
         </div>
       </div>
@@ -224,21 +224,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
         </div>
       )}
 
-      {/* Indicadores fuera del canvas */}
-      {gestureData && isActive && (
-        <div className="mb-6 space-y-4">
-          <ProgressIndicator
-            currentStep={currentFrameIndex + 1}
-            totalSteps={gestureData.frames.length}
-            gestureName={gestureData.name}
-          />
-          <MatchIndicator
-            similarity={similarity}
-            threshold={matchThreshold}
-            isMatch={matchHoldTime > 0}
-          />
-        </div>
-      )}
+      {/* Popup de manteniendo posición fuera del canvas */}
 
       {/* Popup de manteniendo posición fuera del canvas */}
       {gestureData && isActive && matchHoldTime > 0 && (
@@ -264,25 +250,63 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
         <div className="lg:col-span-2 space-y-4">
-          {/* HUD de la Seña actual */}
+          {/* HUD de la Seña actual Unificado */}
           {gestureData && (
-            <div className="bg-white border-2 border-duo-gray rounded-2xl p-4 flex items-center justify-between shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-duo-blue/10 flex items-center justify-center text-duo-blue font-black">
-                  🤟
-                </div>
-                <div>
-                  <span className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest block leading-none mb-1">Seña Objetivo</span>
-                  <p className="font-black text-duo-text text-lg uppercase leading-none">
+            <div className="bg-white border-2 border-duo-gray rounded-2xl p-4 shadow-sm space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                {/* Lado izquierdo: Información de la seña */}
+                <div className="flex-grow">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest leading-none">
+                      Seña Objetivo
+                    </span>
+                  </div>
+                  <h3 className="font-black text-duo-text text-xl sm:text-2xl uppercase leading-none mb-3">
                     {gestureData.name}
-                  </p>
+                  </h3>
+
+                  {/* Barra de progreso de pasos */}
+                  <div className="space-y-1 max-w-xs">
+                    <div className="flex items-center justify-between text-[10px] font-black text-duo-gray-dark uppercase tracking-wide">
+                      <span>Progreso</span>
+                      <span>Paso {currentFrameIndex + 1} / {gestureData.frames.length}</span>
+                    </div>
+                    <div className="w-full h-2.5 bg-duo-gray rounded-full overflow-hidden border border-duo-gray">
+                      <div
+                        className="h-full bg-duo-blue transition-all duration-500 rounded-full"
+                        style={{ width: `${((currentFrameIndex + 1) / gestureData.frames.length) * 100}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <span className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest block leading-none mb-1">Progreso</span>
-                <span className="inline-block px-3 py-1 bg-duo-blue text-white rounded-xl text-xs font-black">
-                  Paso {currentFrameIndex + 1} de {gestureData.frames.length}
-                </span>
+
+                {/* Lado derecho: Precisión del usuario */}
+                {isActive ? (
+                  <div className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all min-w-[100px] sm:min-w-[120px] ${
+                    matchHoldTime > 0 ? 'bg-duo-green/5 border-duo-green' : 'bg-duo-background-soft border-duo-gray'
+                  }`}>
+                    <span className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest mb-1">
+                      Precisión
+                    </span>
+                    <span className={`text-2xl sm:text-3xl font-black leading-none ${
+                      matchHoldTime > 0 ? 'text-duo-green' : similarity >= matchThreshold - 10 ? 'text-duo-yellow-dark' : 'text-duo-text'
+                    }`}>
+                      {similarity.toFixed(0)}%
+                    </span>
+                    <span className="text-[9px] font-bold text-duo-gray-dark uppercase tracking-wide mt-1">
+                      Meta: {matchThreshold}%
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-3 rounded-2xl border-2 bg-duo-background-soft border-duo-gray min-w-[100px] sm:min-w-[120px]">
+                    <span className="text-[10px] font-black text-duo-gray-dark uppercase tracking-widest mb-1">
+                      Precisión
+                    </span>
+                    <span className="text-xs font-bold text-duo-gray-dark uppercase text-center leading-tight">
+                      Presiona<br/>Iniciar
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -332,37 +356,37 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
             </div>
           </div>
 
-          {/* Botones de control en fila horizontal debajo de la cámara */}
+          {/* Botones de control más pequeños debajo de la cámara */}
           {gestureData && (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={toggleActive}
                 disabled={!isLoaded}
-                className={isActive ? 'btn-duo-white w-full border-red-500 text-red-500 py-3 text-xs sm:text-sm' : 'btn-duo-green w-full py-3 text-xs sm:text-sm'}
+                className={isActive ? 'btn-duo-white w-full border-red-500 text-red-500 py-1.5 sm:py-2 text-[10px] sm:text-xs font-black' : 'btn-duo-green w-full py-1.5 sm:py-2 text-[10px] sm:text-xs font-black'}
               >
-                <div className="flex items-center justify-center gap-2">
-                  {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                  <span className="font-black uppercase tracking-wider">{isActive ? 'Pausar' : 'Iniciar'}</span>
+                <div className="flex items-center justify-center gap-1.5">
+                  {isActive ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                  <span className="uppercase tracking-wider">{isActive ? 'Pausar' : 'Iniciar'}</span>
                 </div>
               </button>
 
               <button
                 onClick={handleRestart}
-                className="btn-duo-white w-full py-3 text-xs sm:text-sm"
+                className="btn-duo-white w-full py-1.5 sm:py-2 text-[10px] sm:text-xs font-black"
               >
-                <div className="flex items-center justify-center gap-2">
-                  <RotateCcw className="w-4 h-4" />
-                  <span className="font-black uppercase tracking-wider">Reiniciar</span>
+                <div className="flex items-center justify-center gap-1.5">
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="uppercase tracking-wider">Reiniciar</span>
                 </div>
               </button>
 
               <button
                 onClick={handleCompletePractice}
-                className="btn-duo-blue w-full py-3 text-xs sm:text-sm"
+                className="btn-duo-blue w-full py-1.5 sm:py-2 text-[10px] sm:text-xs font-black"
               >
-                <div className="flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4" strokeWidth={3} />
-                  <span className="font-black uppercase tracking-wider">Finalizar</span>
+                <div className="flex items-center justify-center gap-1.5">
+                  <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                  <span className="uppercase tracking-wider">Finalizar</span>
                 </div>
               </button>
             </div>
@@ -392,7 +416,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
                     <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
                   </span>
                 </summary>
-                
+
                 <div className="mt-4 pt-4 border-t-2 border-duo-gray space-y-4">
                   <div className="p-4 bg-duo-background-soft rounded-2xl border-2 border-duo-gray">
                     <div className="flex items-center justify-between mb-2">
