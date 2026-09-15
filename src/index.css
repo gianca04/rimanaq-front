@@ -42,3 +42,30 @@
     @apply w-full px-4 py-3 bg-duo-background-soft border-2 border-duo-gray rounded-xl outline-none focus:border-duo-blue transition-colors text-duo-text placeholder:text-duo-gray-dark;
   }
 }
+
+@keyframes kawaii-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+@keyframes kawaii-bounce-gentle {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.05);
+  }
+}
+
+.animate-kawaii-float {
+  animation: kawaii-float 3.5s ease-in-out infinite;
+}
+
+.animate-kawaii-bounce {
+  animation: kawaii-bounce-gentle 2s ease-in-out infinite;
+}
+

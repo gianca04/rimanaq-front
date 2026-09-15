@@ -1,9 +1,22 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  Star, Lock, Check, Clock, Zap,
+  Star, Lock, Check, Clock,
   BookOpen, Target, Lightbulb, Flame, Sparkles,
-  Trophy, GraduationCap, Rocket, Hand, Eye,
+  Trophy, GraduationCap, Rocket, Hand, Eye, Sparkle,
 } from 'lucide-react';
+import {
+  Cat,
+  HumanCat,
+  HumanDinosaur,
+  Planet,
+  IceCream,
+  Ghost,
+  Backpack,
+  Cyborg,
+  Chocolate,
+  Astronaut,
+  Mug,
+} from 'react-kawaii';
 import { CourseWithLevels, Level, UserProgress } from '../types';
 
 interface LevelMapProps {
@@ -39,9 +52,112 @@ const LEVEL_ICONS = [
 // Zigzag horizontal en px (relativo al centro)
 const OFFSETS = [0, 55, 90, 55, 0, -55, -90, -55];
 
+// Configuración de Personajes React Kawaii
+interface KawaiiCharacterConfig {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Component: React.FC<any>;
+  name: string;
+  defaultColor: string;
+  completedQuote: string;
+  activeQuote: string;
+  lockedQuote: string;
+}
+
+const KAWAII_CHARACTERS: KawaiiCharacterConfig[] = [
+  {
+    Component: HumanCat,
+    name: 'Michi',
+    defaultColor: '#FFD882',
+    completedQuote: '¡Increíble trabajo!',
+    activeQuote: '¡Vamos por este nivel!',
+    lockedQuote: '¡Pronto se desbloqueará!',
+  },
+  {
+    Component: Cat,
+    name: 'Gatito',
+    defaultColor: '#A3E5D8',
+    completedQuote: '¡Miau! ¡Nivel superado!',
+    activeQuote: '¡Demuestra lo que sabes!',
+    lockedQuote: '¡Sigue practicando!',
+  },
+  {
+    Component: HumanDinosaur,
+    name: 'Dino',
+    defaultColor: '#A0E7E5',
+    completedQuote: '¡Rawr! ¡Muy bien!',
+    activeQuote: '¡Un nuevo reto te espera!',
+    lockedQuote: '¡Casi llegamos aquí!',
+  },
+  {
+    Component: Planet,
+    name: 'Planeta',
+    defaultColor: '#FCCB70',
+    completedQuote: '¡Fuera de este mundo!',
+    activeQuote: '¡Tu aprendizaje brilla!',
+    lockedQuote: '¡Sigue avanzando!',
+  },
+  {
+    Component: IceCream,
+    name: 'Heladito',
+    defaultColor: '#FDA7DF',
+    completedQuote: '¡Qué dulce victoria!',
+    activeQuote: '¡Aprender es genial!',
+    lockedQuote: '¡Con calma y constante!',
+  },
+  {
+    Component: Ghost,
+    name: 'Fantasmita',
+    defaultColor: '#E0C3FC',
+    completedQuote: '¡Sorprendente nivel!',
+    activeQuote: '¡Sin miedo al éxito!',
+    lockedQuote: '¡Buh! Falta poco',
+  },
+  {
+    Component: Backpack,
+    name: 'Mochilita',
+    defaultColor: '#FF9A9E',
+    completedQuote: '¡Listos para la aventura!',
+    activeQuote: '¡Empaca tus ganas!',
+    lockedQuote: '¡Guarda tus energías!',
+  },
+  {
+    Component: Cyborg,
+    name: 'Robotín',
+    defaultColor: '#B5EAD7',
+    completedQuote: '¡Cálculo: PERFECTO!',
+    activeQuote: '¡Procesando nivel!',
+    lockedQuote: '¡Bloqueado aún!',
+  },
+  {
+    Component: Chocolate,
+    name: 'Choco',
+    defaultColor: '#D4A373',
+    completedQuote: '¡Puntaje delicioso!',
+    activeQuote: '¡Nivel apetecible!',
+    lockedQuote: '¡Próximamente más!',
+  },
+  {
+    Component: Astronaut,
+    name: 'Astro',
+    defaultColor: '#C7CEEA',
+    completedQuote: '¡A las estrellas!',
+    activeQuote: '¡Despegue listo!',
+    lockedQuote: '¡Explorando la ruta!',
+  },
+  {
+    Component: Mug,
+    name: 'Tacita',
+    defaultColor: '#FFDAC1',
+    completedQuote: '¡Salud por tu logro!',
+    activeQuote: '¡Disfruta el nivel!',
+    lockedQuote: '¡Preparando lección!',
+  },
+];
+
 const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel }) => {
   const [activeLevel, setActiveLevel] = useState<string | null>(null);
   const [tooltipBelow, setTooltipBelow] = useState<Record<string, boolean>>({});
+  const [tappedCharacter, setTappedCharacter] = useState<string | null>(null);
 
   const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const tooltipRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -55,6 +171,13 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
     const prev = course.levels[idx - 1];
     return userProgress[course.id]?.[prev.id]?.completed || false;
   };
+
+  // Encontrar el primer nivel activo (desbloqueado pero aún no completado)
+  const currentActiveIndex = course.levels.findIndex((lvl, idx) => {
+    const unlocked = isLevelUnlocked(idx);
+    const completed = userProgress[course.id]?.[lvl.id]?.completed;
+    return unlocked && !completed;
+  });
 
   const getDifficultyLabel = (d: string) => {
     if (d === 'easy') return 'Fácil';
@@ -83,7 +206,15 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
     setActiveLevel(levelId);
   }, []);
 
-  // Cerrar al click fuera
+  // Interacción al presionar un personaje Kawaii
+  const handleCharacterClick = (levelId: string) => {
+    setTappedCharacter(levelId);
+    setTimeout(() => {
+      setTappedCharacter(prev => (prev === levelId ? null : prev));
+    }, 3000);
+  };
+
+  // Cerrar tooltip al hacer click fuera
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!activeLevel) return;
@@ -99,7 +230,7 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
 
   // Conector SVG bezier entre dos nodos
   const renderConnector = (fromOffset: number, toOffset: number, isUnlocked: boolean) => {
-    const W = 240, H = 52;
+    const W = 240, H = 58;
     const cx = W / 2;
     const x1 = cx + fromOffset, x2 = cx + toOffset;
     const mid = H / 2;
@@ -120,36 +251,85 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
     );
   };
 
-  return (
-    <div className="min-h-screen bg-duo-background-soft pb-24">
+  // Mascot del Banner (Planeta o Michi)
+  const BannerMascot = KAWAII_CHARACTERS[0].Component;
 
-      {/* Banner del curso — efecto Duolingo con border-b */}
+  return (
+    <div className="min-h-screen bg-duo-background-soft pb-24 select-none">
+
+      {/* Banner del curso con personaje Kawaii de bienvenida */}
       <div
-        className="px-5 py-5 mb-2 mx-4 mt-4 rounded-2xl"
+        className="px-5 py-5 mb-2 mx-4 mt-4 rounded-2xl relative overflow-hidden flex items-center justify-between"
         style={{
           backgroundColor: courseColor,
           borderBottom: `5px solid ${courseDark}`,
         }}
       >
-        <span className="text-white/70 text-[11px] font-black uppercase tracking-widest block mb-1">
-          {course.levels.length} NIVELES
-        </span>
-        <h2 className="text-white font-black text-xl sm:text-2xl uppercase tracking-tight leading-tight">
-          {course.title}
-        </h2>
+        <div className="z-10 max-w-[70%]">
+          <span className="text-white/80 text-[11px] font-black uppercase tracking-widest block mb-1 flex items-center gap-1">
+            <Sparkle className="w-3.5 h-3.5 fill-white" /> {course.levels.length} NIVELES DE APRENDIZAJE
+          </span>
+          <h2 className="text-white font-black text-xl sm:text-2xl uppercase tracking-tight leading-tight drop-shadow-sm">
+            {course.title}
+          </h2>
+        </div>
+
+        {/* Personaje Kawaii flotante en el Banner */}
+        <div className="animate-kawaii-float flex-shrink-0 cursor-pointer transition-transform hover:scale-110 active:scale-95"
+             title="¡Bienvenido al camino de niveles!">
+          <BannerMascot size={72} mood="blissful" color="#FFD882" />
+        </div>
       </div>
 
-      {/* Path */}
-      <div className="relative flex flex-col items-center pt-8 px-4">
+      {/* Camino de niveles (Path) */}
+      <div className="relative flex flex-col items-center pt-6 px-4 max-w-lg mx-auto">
         {course.levels.map((level, index) => {
           const isUnlocked = isLevelUnlocked(index);
           const progress = userProgress[course.id]?.[level.id];
           const isCompleted = progress?.completed || false;
           const isActive = activeLevel === level.id;
+          const isCurrentTarget = index === (currentActiveIndex === -1 ? course.levels.length - 1 : currentActiveIndex);
           const showBelow = tooltipBelow[level.id] ?? false;
 
           const xOffset = OFFSETS[index % OFFSETS.length];
           const prevOffset = index > 0 ? OFFSETS[(index - 1) % OFFSETS.length] : 0;
+
+          // Cálculo de posición del personaje Kawaii a los lados del nodo
+          let charXOffset = 0;
+          if (xOffset > 25) {
+            charXOffset = xOffset - 115;
+          } else if (xOffset < -25) {
+            charXOffset = xOffset + 115;
+          } else {
+            charXOffset = index % 2 === 0 ? -115 : 115;
+          }
+
+          // Mostrar 1 personaje por cada dos niveles (índices pares: 0, 2, 4, 6...)
+          const showCharacter = index % 2 === 0;
+
+          // Selección de personaje Kawaii para este slot
+          const charConfig = KAWAII_CHARACTERS[Math.floor(index / 2) % KAWAII_CHARACTERS.length];
+          const KawaiiComp = charConfig.Component;
+
+          // Estado de humor Kawaii según progreso o toque
+          const isTapped = tappedCharacter === level.id;
+          let currentMood: 'sad' | 'shocked' | 'happy' | 'blissful' | 'lovestruck' | 'excited' | 'ko' = 'happy';
+          if (isTapped) {
+            currentMood = 'lovestruck';
+          } else if (isCompleted) {
+            currentMood = 'blissful';
+          } else if (isCurrentTarget) {
+            currentMood = 'excited';
+          } else if (!isUnlocked) {
+            currentMood = 'sad';
+          }
+
+          // Texto de la burbuja
+          const quoteText = isCompleted
+            ? charConfig.completedQuote
+            : isCurrentTarget
+              ? charConfig.activeQuote
+              : charConfig.lockedQuote;
 
           // Icono Lucide para este slot
           const IconComp = isCompleted
@@ -164,12 +344,49 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
           const iconColor = isUnlocked || isCompleted ? '#ffffff' : '#AAAAAA';
 
           return (
-            <div key={level.id} className="relative flex flex-col items-center w-full">
+            <div key={level.id} className="relative flex flex-col items-center w-full my-1">
 
               {/* Conector SVG */}
               {index > 0 && renderConnector(prevOffset, xOffset, isUnlocked)}
 
-              {/* Tooltip */}
+              {/* Personaje Kawaii Acompañante a un lado del camino (1 cada 2 niveles) */}
+              {showCharacter && (
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group transition-transform duration-200 hover:scale-110 active:scale-95 z-20"
+                  style={{
+                    left: '50%',
+                    transform: `translate(calc(-50% + ${charXOffset}px), -50%)`,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCharacterClick(level.id);
+                  }}
+                  title={`${charConfig.name} - Haz clic para interactuar`}
+                >
+                  {/* Div apilado verticalmente: Globo arriba + Personaje abajo */}
+                  <div className="flex flex-col items-center">
+                    {/* Globo de diálogo (Speech Bubble) inmediatamente encima del personaje */}
+                    {(isCurrentTarget || isTapped) && (
+                      <div className="relative mb-0.5 px-3 py-1.5 bg-white rounded-2xl shadow-xl border-2 border-gray-300 text-[11px] font-black text-gray-800 whitespace-nowrap animate-kawaii-bounce flex items-center gap-1 z-30 pointer-events-none">
+                        <span>{quoteText}</span>
+                        {/* Flecha inferior del globo que sale del personaje */}
+                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-white border-r-2 border-b-2 border-gray-300 rotate-45 z-10" />
+                      </div>
+                    )}
+
+                    {/* Personaje Kawaii */}
+                    <div className={isCurrentTarget ? 'animate-kawaii-float' : isCompleted ? 'animate-kawaii-bounce' : 'opacity-85'}>
+                      <KawaiiComp
+                        size={56}
+                        mood={currentMood}
+                        color={isUnlocked ? charConfig.defaultColor : '#D1D5DB'}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tooltip de nivel al hacer click */}
               {isActive && isUnlocked && (
                 <div
                   ref={el => { tooltipRefs.current[level.id] = el; }}
@@ -249,7 +466,7 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
                 </div>
               )}
 
-              {/* Botón circular — efecto Duolingo 3D */}
+              {/* Botón circular del Nivel — efecto Duolingo 3D */}
               <button
                 ref={el => { btnRefs.current[level.id] = el; }}
                 onClick={() => handleLevelClick(level.id, isUnlocked, isActive)}
@@ -260,7 +477,6 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
                   width: 68,
                   height: 68,
                   backgroundColor: btnBg,
-                  // Separar en propiedades individuales para evitar conflicto shorthand/longhand
                   borderTopWidth: 3,
                   borderRightWidth: 3,
                   borderLeftWidth: 3,
@@ -269,7 +485,7 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
                   borderColor: btnBorderColor,
                   transform: `translateX(${xOffset}px) translateY(${isActive ? 3 : 0}px)`,
                   cursor: isUnlocked ? 'pointer' : 'not-allowed',
-                  zIndex: isActive ? 20 : 1,
+                  zIndex: isActive ? 30 : 1,
                 }}
               >
                 <IconComp
@@ -300,15 +516,23 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
           );
         })}
 
-        {/* Final del camino */}
-        <div className="flex flex-col items-center mt-4 opacity-35">
+        {/* Meta / Final del camino con Personaje Celebrando */}
+        <div className="flex flex-col items-center mt-6 mb-8">
           <svg width={240} height={36} viewBox="0 0 240 36">
             <path d="M 120 0 L 120 30" stroke="#C0C0C0" strokeWidth={5}
               strokeLinecap="round" strokeDasharray="8 6" />
           </svg>
-          <div className="w-14 h-14 rounded-full border-4 border-dashed border-gray-300
-                          flex items-center justify-center">
-            <Zap className="w-5 h-5 text-gray-300" />
+
+          <div className="flex flex-col items-center gap-2 animate-kawaii-float cursor-pointer hover:scale-105 transition-transform">
+            <div className="relative">
+              <Astronaut size={85} mood="excited" color="#C7CEEA" />
+              <div className="absolute -top-2 -right-2 bg-amber-400 p-1.5 rounded-full text-white shadow-md">
+                <Trophy className="w-5 h-5 fill-white" />
+              </div>
+            </div>
+            <span className="text-xs font-black text-gray-500 uppercase tracking-wider bg-white px-3 py-1 rounded-full border-2 border-gray-200 shadow-sm">
+              ¡Gran Meta Final!
+            </span>
           </div>
         </div>
       </div>
