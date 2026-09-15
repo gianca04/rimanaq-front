@@ -289,16 +289,7 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
           </div>
         )}
 
-        {/* Mensaje de completado sobre la cámara */}
-        {isCompleted && gestureData && (
-          <div className="absolute inset-0 flex items-center justify-center bg-duo-green/80 backdrop-blur-sm">
-            <CompletionMessage
-              gestureName={gestureData.name}
-              onRestart={handleRestart}
-              onComplete={handleCompletePractice}
-            />
-          </div>
-        )}
+
       </div>
 
       {/* Botones de control */}
@@ -395,6 +386,15 @@ const GesturePractice: React.FC<GesturePracticeProps> = ({
         onChange={handleFileUpload}
         className="hidden"
       />
+
+      {/* Modal de completado — fuera de cualquier overflow:hidden para que fixed funcione */}
+      {isCompleted && gestureData && (
+        <CompletionMessage
+          gestureName={gestureData.name}
+          onRestart={handleRestart}
+          onComplete={handleCompletePractice}
+        />
+      )}
     </div>
   );
 };
