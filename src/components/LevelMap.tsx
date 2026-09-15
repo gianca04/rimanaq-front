@@ -260,13 +260,13 @@ const LevelMap: React.FC<LevelMapProps> = ({ course, userProgress, onSelectLevel
                   width: 68,
                   height: 68,
                   backgroundColor: btnBg,
-                  // Efecto 3D: borde inferior grueso en color oscuro (como btn-duo)
-                  borderBottom: isActive
-                    ? `2px solid ${btnBorderColor}`
-                    : `6px solid ${btnBorderColor}`,
-                  // Borde lateral sutil
-                  border: `3px solid ${btnBorderColor}`,
+                  // Separar en propiedades individuales para evitar conflicto shorthand/longhand
+                  borderTopWidth: 3,
+                  borderRightWidth: 3,
+                  borderLeftWidth: 3,
                   borderBottomWidth: isActive ? 2 : 6,
+                  borderStyle: 'solid',
+                  borderColor: btnBorderColor,
                   transform: `translateX(${xOffset}px) translateY(${isActive ? 3 : 0}px)`,
                   cursor: isUnlocked ? 'pointer' : 'not-allowed',
                   zIndex: isActive ? 20 : 1,
