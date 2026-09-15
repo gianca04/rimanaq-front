@@ -81,83 +81,88 @@ const LessonContentRenderer: React.FC<LessonContentRendererProps> = ({
   const progressPercentage = showPractice ? 100 : ((currentStep + 1) / totalSteps) * 100;
 
   return (
-    <div className={`max-w-4xl mx-auto pb-12 ${className}`}>
-      {/* El progreso ahora se maneja en el Modal superior estilo Duolingo */}
-
-      <div className={`card-duo min-h-[500px] flex flex-col ${showPractice ? 'p-2 sm:p-6' : 'p-6'}`}>
-        {showPractice ? (
-          <div className="flex-grow flex flex-col">
+    <div className={`${className}`}>
+      {showPractice ? (
+        <>
+          <div className="flex-grow flex flex-col overflow-hidden">
             <GesturePractice
               gestures={gestures}
               onComplete={handleCompletePractice}
               className="flex-grow"
             />
+          </div>
+          <div className="px-4 py-3 border-t-2 border-duo-gray">
+            <button
+              onClick={() => setShowPractice(false)}
+              className="btn-duo-white w-full text-xs"
+            >
+              VOLVER A LA LECCIÓN
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Contenido scrollable */}
+          <div className="flex-grow overflow-y-auto px-4 pt-3 pb-2">
+            {/* Indicador de paso */}
+            <div className="text-center mb-2">
+              <span className="inline-block px-3 py-1 bg-duo-blue/10 text-duo-blue rounded-full text-xs font-black uppercase tracking-widest">
+                Paso {currentStep + 1} de {totalSteps}
+              </span>
+            </div>
 
-            <div className="p-6 border-t-2 border-duo-gray">
-              <button
-                onClick={() => setShowPractice(false)}
-                className="btn-duo-white w-full text-xs"
-              >
-                VOLVER A LA LECCIÓN
-              </button>
+            {/* Título del paso */}
+            <h2 className="text-xl sm:text-2xl font-black text-duo-text text-center uppercase tracking-tight mb-1">
+              {currentContentStep.titulo}
+            </h2>
+            <div className="h-1 w-12 bg-duo-blue mx-auto rounded-full mb-2"></div>
+
+            {/* Descripción */}
+            <p className="text-sm font-bold text-duo-gray-dark text-center mb-3 leading-relaxed">
+              {currentContentStep.descripcion}
+            </p>
+
+            {/* Media */}
+            <div className="mb-3">
+              <MediaRenderer media={currentContentStep.media} />
+            </div>
+
+            {/* Instrucción / contenido */}
+            <div className="bg-duo-background-soft rounded-2xl p-3 border-2 border-duo-gray">
+              <p className="text-duo-text font-bold text-sm text-center leading-relaxed">
+                {currentContentStep.contenido}
+              </p>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col flex-grow">
-            <div className="p-8 sm:p-12 flex-grow">
-              <div className="mb-10 text-center">
-                <span className="inline-block px-4 py-2 bg-duo-blue/10 text-duo-blue rounded-xl text-xs font-black uppercase tracking-widest mb-6">
-                  Paso {currentStep + 1} de {totalSteps}
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-black text-duo-text mb-6 uppercase tracking-tight">
-                  {currentContentStep.titulo}
-                </h2>
-                <div className="h-2 w-20 bg-duo-blue mx-auto rounded-full mb-8"></div>
-                <p className="text-xl font-bold text-duo-gray-dark leading-relaxed max-w-2xl mx-auto">
-                  {currentContentStep.descripcion}
-                </p>
-              </div>
 
-              <div className="mb-12">
-                <MediaRenderer media={currentContentStep.media} />
-              </div>
+          {/* Navegación fija al fondo de la tarjeta */}
+          <div className="px-4 py-3 border-t-2 border-duo-gray flex items-center justify-between">
+            <button
+              onClick={goToPreviousStep}
+              disabled={currentStep === 0}
+              className={`btn-duo-white px-4 ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}`}
+            >
+              <ChevronLeft className="w-6 h-6" strokeWidth={3} />
+            </button>
 
-              <div className="bg-duo-background-soft rounded-2xl p-8 border-2 border-duo-gray">
-                <p className="text-duo-text font-bold leading-relaxed text-lg sm:text-xl text-center">
-                  {currentContentStep.contenido}
-                </p>
-              </div>
+            <div className="flex space-x-2">
+              {sortedContent.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`h-2 rounded-full transition-all duration-300 ${idx === currentStep ? 'w-8 bg-duo-blue' : 'w-2 bg-duo-gray'}`}
+                ></div>
+              ))}
             </div>
 
-            {/* Navegación interna de la lección */}
-            <div className="p-6 border-t-2 border-duo-gray flex items-center justify-between">
-              <button
-                onClick={goToPreviousStep}
-                disabled={currentStep === 0}
-                className={`btn-duo-white px-4 ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''}`}
-              >
-                <ChevronLeft className="w-6 h-6" strokeWidth={3} />
-              </button>
-
-              <div className="flex space-x-2">
-                {sortedContent.map((_, idx) => (
-                  <div 
-                    key={idx}
-                    className={`h-2 rounded-full transition-all duration-300 ${idx === currentStep ? 'w-8 bg-duo-blue' : 'w-2 bg-duo-gray'}`}
-                  ></div>
-                ))}
-              </div>
-
-              <button
-                onClick={goToNextStep}
-                className="btn-duo-blue px-4"
-              >
-                <ChevronRight className="w-6 h-6" strokeWidth={3} />
-              </button>
-            </div>
+            <button
+              onClick={goToNextStep}
+              className="btn-duo-blue px-4"
+            >
+              <ChevronRight className="w-6 h-6" strokeWidth={3} />
+            </button>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };

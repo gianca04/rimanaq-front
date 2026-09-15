@@ -29,23 +29,26 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="bg-white border-b-2 border-duo-gray sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
             {selectedCourse && (
               <button
                 onClick={onBackToCourses}
-                className="flex items-center space-x-2 text-duo-gray-dark hover:text-duo-text transition-colors duration-200 px-3 py-2 rounded-xl"
+                className="flex-shrink-0 flex items-center space-x-2 text-duo-gray-dark hover:text-duo-text transition-colors duration-200 px-2 sm:px-3 py-2 rounded-xl"
               >
                 <ArrowLeft className="w-5 h-5" strokeWidth={3} />
                 <span className="font-black uppercase text-sm hidden sm:inline">Cursos</span>
               </button>
             )}
-            <h1 className="text-2xl font-black text-duo-blue">
+            <h1 
+              className="text-base sm:text-xl md:text-2xl font-black text-duo-blue truncate"
+              title={selectedCourse ? selectedCourse.title : 'RIMANAQ'}
+            >
               {selectedCourse ? selectedCourse.title : 'RIMANAQ'}
             </h1>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
             {selectedCourse && (
               <>
                 <div className="hidden md:flex items-center space-x-6">

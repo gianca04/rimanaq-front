@@ -114,7 +114,7 @@ const LessonModal: React.FC<LessonModalProps> = ({
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col animate-in fade-in duration-200">
       {/* Header Estilo Duolingo */}
-      <div className="container mx-auto px-4 py-6 flex items-center space-x-4">
+      <div className="container mx-auto px-3 py-3 flex items-center space-x-4">
         <button
           onClick={onClose}
           className="text-duo-gray-dark hover:text-duo-text transition-colors"
@@ -137,75 +137,56 @@ const LessonModal: React.FC<LessonModalProps> = ({
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-grow overflow-y-auto">
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-          {!isCompleted ? (
-            <div className="animate-in slide-in-from-bottom duration-500">
-              {!isPracticeMode && (
-                <h2 className="text-3xl font-black text-duo-text mb-8 text-center uppercase tracking-tight">
-                  {lessonData?.name || level.title}
-                </h2>
-              )}
-              <LessonContentRenderer
-                content={lessonData?.content || null}
-                gestures={lessonData?.gestures || null}
-                onComplete={handleComplete}
-                onShowPracticeChange={setIsPracticeMode}
-                className="p-0"
-              />
+      <div className="flex-grow overflow-y-auto flex flex-col">
+        {!isCompleted ? (
+          <LessonContentRenderer
+            content={lessonData?.content || null}
+            gestures={lessonData?.gestures || null}
+            onComplete={handleComplete}
+            onShowPracticeChange={setIsPracticeMode}
+            className="flex-grow flex flex-col"
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 px-4 flex-grow animate-in zoom-in-95 duration-500">
+            <div className="w-28 h-28 bg-duo-yellow rounded-full flex items-center justify-center shadow-[0_6px_0_#E5B400] mb-5">
+              <Trophy className="w-14 h-14 text-white" strokeWidth={3} />
             </div>
-          ) : (
-            /* Pantalla de completado estilo Duolingo */
-            <div className="flex flex-col items-center justify-center py-12 animate-in zoom-in-95 duration-500">
-              <div className="w-48 h-48 bg-duo-yellow rounded-full flex items-center justify-center shadow-[0_8px_0_#E5B400] mb-12">
-                <Trophy className="w-24 h-24 text-white" strokeWidth={3} />
+            <h2 className="text-2xl font-black text-duo-text mb-2 uppercase tracking-tighter text-center">
+              ¡Lección completada!
+            </h2>
+            <p className="text-base font-bold text-duo-gray-dark mb-6 text-center">
+              Has ganado <span className="text-duo-yellow font-black">+10 XP</span>
+            </p>
+            <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
+              <div className="card-duo p-4 text-center">
+                <span className="block text-xs font-black text-duo-gray-dark uppercase mb-1">Puntos</span>
+                <span className="text-xl font-black text-duo-blue">150</span>
               </div>
-
-              <h2 className="text-4xl font-black text-duo-text mb-4 uppercase tracking-tighter text-center">
-                ¡Lección completada!
-              </h2>
-              <p className="text-xl font-bold text-duo-gray-dark mb-12 text-center">
-                Has ganado <span className="text-duo-yellow font-black">+10 XP</span>
-              </p>
-
-              <div className="grid grid-cols-2 gap-4 w-full max-w-md">
-                <div className="card-duo p-6 text-center">
-                  <span className="block text-xs font-black text-duo-gray-dark uppercase mb-1">Puntos</span>
-                  <span className="text-2xl font-black text-duo-blue">150</span>
-                </div>
-                <div className="card-duo p-6 text-center">
-                  <span className="block text-xs font-black text-duo-gray-dark uppercase mb-1">Tiempo</span>
-                  <span className="text-2xl font-black text-duo-green">{lessonData?.time_minutes || level.estimatedTime}m</span>
-                </div>
+              <div className="card-duo p-4 text-center">
+                <span className="block text-xs font-black text-duo-gray-dark uppercase mb-1">Tiempo</span>
+                <span className="text-xl font-black text-duo-green">{lessonData?.time_minutes || level.estimatedTime}m</span>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Footer Fijo Duolingo */}
-      <div className="border-t-4 border-duo-gray py-6 sm:py-10 bg-white">
-        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row justify-between items-center gap-4">
-          {!isCompleted ? (
-            <p className="text-duo-gray-dark font-bold text-sm uppercase tracking-widest hidden sm:block">
-              Presiona continuar al terminar
-            </p>
-          ) : (
-            <button
-              onClick={handleReviewLesson}
-              className="btn-duo-white sm:w-auto"
-            >
-              REVISAR LECCIÓN
-            </button>
-          )}
-          
+      {/* Footer Fijo */}
+      <div className="border-t-2 border-duo-gray py-3 bg-white px-4 flex items-center gap-3">
+        {isCompleted && (
           <button
-            onClick={isCompleted ? onClose : handleComplete}
-            className={`w-full sm:w-auto sm:px-12 ${isCompleted ? 'btn-duo-green' : 'btn-duo-blue'}`}
+            onClick={handleReviewLesson}
+            className="btn-duo-white flex-1"
           >
-            {isCompleted ? 'CONTINUAR' : 'COMPLETAR'}
+            REVISAR
           </button>
-        </div>
+        )}
+        <button
+          onClick={isCompleted ? onClose : handleComplete}
+          className={`flex-1 ${isCompleted ? 'btn-duo-green' : 'btn-duo-blue'}`}
+        >
+          {isCompleted ? 'CONTINUAR' : 'COMPLETAR'}
+        </button>
       </div>
     </div>
   );
